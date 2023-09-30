@@ -1,0 +1,10 @@
+IncludeDir = {}
+IncludeDir ["GLFW"] = "%{wks.location}/GreenBox/Dependencies/GLFW/include" 
+IncludeDir ["Glad"] = "%{wks.location}/GreenBox/Dependencies/Glad/include" 
+IncludeDir ["ImGui"] = "%{wks.location}/Greenbox/Dependencies/imgui" 
+IncludeDir ["glm"] = "%{wks.location}/GreenBox/Dependencies/glm" 
+IncludeDir ["stb_image"] = "%{wks.location}/GreenBox/Dependencies/stb_image" 
+IncludeDir ["entt"] = "%{wks.location}/GreenBox/Dependencies/entt/include"
+IncludeDir ["yaml_cpp"] = "%{wks.location}/GreenBox/Dependencies/yaml-cpp/include" 
+IncludeDir ["ImGuizmo"] = "%{wks.location}/GreenBox/Dependencies/ImGuizmo" 
+IncludeDir ["spdlog"] = "%{wks.location}/GreenBox/Dependencies/spdlog/include" 
