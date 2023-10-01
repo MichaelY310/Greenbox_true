@@ -8,7 +8,7 @@ project "Greenbox"
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
 	pchheader "gbpch.h"
-	pchsource "src/gbpch.cpp"
+	pchsource "src/PCH/gbpch.cpp"
 
 	files
     {
