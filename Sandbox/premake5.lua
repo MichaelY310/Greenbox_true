@@ -15,13 +15,19 @@ project "Sandbox"
 
 	includedirs
 	{
-		"%{wks.location}/GreenBox/Dependencies/spdlog/include",
+		"%{wks.location}/Greenbox/Dependencies/spdlog/include",
 		"%{wks.location}/Greenbox/src",
 		"%{wks.location}/Greenbox/include",
-		"%{wks.location}/GreenBox/Dependencies",
-		"%{IncludeDir.entt}",
-		"%{IncludeDir.glm}",
-		"%{IncludeDir.ImGuizmo}"
+		"%{wks.location}/Greenbox/Dependencies",
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.Glad}",
+        "%{IncludeDir.ImGui}", 
+        "%{IncludeDir.glm}", 
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.entt}",
+        "%{IncludeDir.yaml_cpp}",
+        "%{IncludeDir.ImGuizmo}",
+        "%{IncludeDir.spdlog}",
 	}
 
 	links 
@@ -34,7 +40,9 @@ project "Sandbox"
 
         defines
         {
-            "GB_PLATFORM_WINDOWS"
+            "GB_PLATFORM_WINDOWS",
+            "GLFW_INCLUDE_NONE"
+
         }
 
     filter "configurations:Debug"

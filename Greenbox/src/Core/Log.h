@@ -19,8 +19,6 @@ namespace Greenbox {
 	private:
 		static std::shared_ptr<spdlog::logger> s_Logger;
 	};
-
-	std::shared_ptr<spdlog::logger> Log::s_Logger;
 }
 
 

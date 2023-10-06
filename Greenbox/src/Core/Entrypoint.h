@@ -1,15 +1,16 @@
 #pragma once
 
-#include <iostream>
-#include <string>
 #include <Core/Log.h>
+#include <Core/Application.h>
+
+extern Greenbox::Application* Greenbox::CreateApplication();
 
 int main()
 {
 	Greenbox::Log::Init();
 
-	GB_ASSERT(1 == 2, "fuck you!");
+	Greenbox::Application* app = Greenbox::CreateApplication();
+	app->Run();
 
-	std::cout << "Hello Greenbox!!" << std::endl;
 	return 0;
 }

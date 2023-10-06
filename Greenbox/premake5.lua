@@ -13,7 +13,6 @@ project "Greenbox"
 	files
     {
         "include/**.h",
-        "include/**.cpp",
         "src/**.h",
         "src/**.cpp",
         "Dependencies/stb_image/**.h",
@@ -27,13 +26,15 @@ project "Greenbox"
 
     defines
     {
-        "_CRT_SECURE_NO_WARNINGS"
+        "_CRT_SECURE_NO_WARNINGS",
+        "GLFW_INCLUDE_NONE"
     }
 
     includedirs 
     {
         "src",
         "include",
+        "src/PCH",
         "Dependencies/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
@@ -65,7 +66,7 @@ project "Greenbox"
         {
             "GB_PLATFORM_WINDOWS",
             "GB_BUILD_DLL",
-            "GLFW_INCLUDE_NONE",
+            "GLFW_INCLUDE_NONE"
         }
 
     filter "configurations:Debug"
