@@ -129,4 +129,8 @@ namespace Greenbox {
 	void Shader::setVec3(const std::string& name, glm::vec3 value) const {
 		glUniform3fv(glGetUniformLocation(m_RendererID, name.c_str()), 1, glm::value_ptr(value));
 	}
+
+	void Shader::setIntArray(const std::string& name, int* values, uint32_t count) const {
+		glUniform1iv(glGetUniformLocation(m_RendererID, name.c_str()), count, values);
+	}
 }

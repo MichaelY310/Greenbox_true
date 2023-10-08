@@ -64,6 +64,7 @@ namespace Greenbox {
 	bool Application::OnWindowResize(WindowResizeEvent& e)
 	{
 		GB_INFO("Application::OnWindowResize");
+		//glViewport(0, 0, e.GetWidth(), e.GetHeight());
 		return false;
 	}
 

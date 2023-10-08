@@ -20,7 +20,6 @@ namespace Greenbox {
 		std::string m_Name;
 		uint32_t VAO;
 		Shader m_Shader;
-		Texture2D texture;
 
 		Camera m_EditorCamera;
 	};

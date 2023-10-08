@@ -5,16 +5,27 @@
 
 namespace Greenbox {
 
+	static bool s_GLFWInitialized = false;
+
 	Window::Window(std::string title, uint32_t width, uint32_t height)
 		: m_Title(title), m_Width(width), m_Height(height)
 	{
-
 		GB_INFO("Window::Window   Window is created");
-		// Initialzation
-		glfwInit();
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+
+		// Initialze GLFW
+		if (!s_GLFWInitialized)
+		{
+			int success = glfwInit();
+			GB_ASSERT(success, "Could not initialize GLFW!");
+			//glfwSetErrorCallback(GLFWErrorCallback);
+			s_GLFWInitialized = true;
+		}
+
+		// Initialize GLFWwindow
+		//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+		//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		m_GLFWwindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
 		if (m_GLFWwindow == NULL)
 		{
@@ -23,6 +34,8 @@ namespace Greenbox {
 			return;
 		}
 		glfwMakeContextCurrent(m_GLFWwindow);
+
+		// Initialize GLAD
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			GB_ASSERT(false, "Failed to initialize GLAD");

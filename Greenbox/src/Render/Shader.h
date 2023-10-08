@@ -23,7 +23,8 @@ namespace Greenbox {
 		void setMat4(const std::string& name, glm::mat4 value) const;
 		void setVec2(const std::string& name, glm::vec2 value) const;
 		void setVec3(const std::string& name, glm::vec3 value) const;
-			
+		void setIntArray(const std::string& name, int* values, uint32_t count) const;
+
 	private:
 		uint32_t m_RendererID;
 

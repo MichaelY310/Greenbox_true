@@ -9,16 +9,18 @@ namespace Greenbox {
 	public:
 		Texture2D(char* filePath);			// for pictures
 		Texture2D(uint32_t plainColor, uint32_t width, uint32_t height);	// for not picture, pure color
+		~Texture2D() { glDeleteTextures(1, &m_RendererID); }
 
 		void Bind(uint32_t slot) const;
 		uint32_t GetWidth() const { return m_Width; }
 		uint32_t GetHeight() const { return m_Height; }
+		uint32_t GetRendererID() { return m_RendererID; }
 		uint32_t HasPicture() const { return m_IsPicture; }
 
 		void SetName(char* path) { m_Path = path; }
 	private:
 		std::string m_Name = "Untitled";
-		char* m_Path;
+		char* m_Path = "";
 		uint32_t plainColor;
 		uint32_t m_RendererID;
 		uint32_t m_Width;
