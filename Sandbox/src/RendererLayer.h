@@ -22,6 +22,13 @@ namespace Greenbox {
 		Shader m_Shader;
 
 		Camera m_EditorCamera;
+		Renderer m_Renderer;
+		std::shared_ptr<Texture2D> texture;
+		std::shared_ptr<Texture2D> whiteTexture;
+		std::shared_ptr<Texture2D> texture1;
+		std::shared_ptr<Texture2D> texture2;
+		std::shared_ptr<Texture2D> texture3;
+
 	};
 
 }

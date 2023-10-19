@@ -18,7 +18,7 @@ namespace Greenbox {
 		{
 			int success = glfwInit();
 			GB_ASSERT(success, "Could not initialize GLFW!");
-			//glfwSetErrorCallback(GLFWErrorCallback);
+			glfwSetErrorCallback(GLFWErrorCallback);
 			s_GLFWInitialized = true;
 		}
 
@@ -81,8 +81,8 @@ namespace Greenbox {
 
 	void Window::OnUpdate() 
 	{ 
-		glfwSwapBuffers(m_GLFWwindow); 
-		glfwPollEvents(); 
+		glfwPollEvents();
+		glfwSwapBuffers(m_GLFWwindow);
 	}
 
 }

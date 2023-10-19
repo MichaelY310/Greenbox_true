@@ -4,7 +4,7 @@
 
 namespace Greenbox {
 
-	Texture2D::Texture2D(char* filePath)
+	Texture2D::Texture2D(const char* filePath)
 		: m_Path(filePath), plainColor(0xffffffff), m_Width(0), m_Height(0), m_IsPicture(true)
 	{
 		stbi_set_flip_vertically_on_load(true);
@@ -14,6 +14,7 @@ namespace Greenbox {
 		m_Width = width;
 		m_Height = height;
 		m_n_Channels = n_Channels;
+		GB_INFO("Texture2D::Texture2D   there are {0} channels", n_Channels);
 		if (n_Channels == 4)
 		{
 			m_InternalFormat = GL_RGBA8;

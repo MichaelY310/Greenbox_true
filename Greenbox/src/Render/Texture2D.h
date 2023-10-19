@@ -7,8 +7,10 @@ namespace Greenbox {
 	class Texture2D
 	{
 	public:
-		Texture2D(char* filePath);			// for pictures
+		Texture2D(const char* filePath);			// for pictures
 		Texture2D(uint32_t plainColor, uint32_t width, uint32_t height);	// for not picture, pure color
+		static std::shared_ptr<Texture2D> Create(uint32_t plainColor, uint32_t width, uint32_t height) { return std::make_shared<Texture2D>(plainColor, width, height); };
+		static std::shared_ptr<Texture2D> Create(const char* filePath) { return std::make_shared<Texture2D>(filePath); };
 		~Texture2D() { glDeleteTextures(1, &m_RendererID); }
 
 		void Bind(uint32_t slot) const;
@@ -17,10 +19,13 @@ namespace Greenbox {
 		uint32_t GetRendererID() { return m_RendererID; }
 		uint32_t HasPicture() const { return m_IsPicture; }
 
-		void SetName(char* path) { m_Path = path; }
+		void SetName(std::string name) { m_Name = name; }
+		std::string GetName() { return m_Name; }
+		const char* GetPath() { return m_Path; }
+
 	private:
 		std::string m_Name = "Untitled";
-		char* m_Path = "";
+		const char* m_Path = "";
 		uint32_t plainColor;
 		uint32_t m_RendererID;
 		uint32_t m_Width;

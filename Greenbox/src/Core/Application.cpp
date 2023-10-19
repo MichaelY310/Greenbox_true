@@ -1,6 +1,7 @@
 #include "gbpch.h"
 #include "Application.h"
 #include "Utils.h"
+#include "Render/Renderer.h"
 
 namespace Greenbox {
 
@@ -12,8 +13,10 @@ namespace Greenbox {
 	{
 		s_Instance = this;
 
-		m_Window = std::make_unique<Window>(appName, 900, 600);
+		m_Window = std::make_unique<Window>(appName, 1280, 720);
 		m_Window->SetEventCallbackFn(GB_BIND_FUNCTION(Application::OnEvent));
+
+		//Renderer::Init();
 	}
 
 	Application::~Application()

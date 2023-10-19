@@ -4,6 +4,7 @@
 #include <functional>
 #include "Event/ApplicationEvent.h"
 #include "Event/MouseEvent.h"
+#include "Core/Log.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -30,6 +31,11 @@ namespace Greenbox {
 
 			std::function<void(Event&)> EventCallbackFn;
 		};
+	private:
+		static void GLFWErrorCallback(int error, const char* description)
+		{
+			GB_ERROR("GLFW Error ({0}): {1}", error, description);
+		}
 	private:
 		std::string m_Title;
 		uint32_t m_Width;

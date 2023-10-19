@@ -4,9 +4,10 @@ namespace Greenbox {
 
 
 	RendererLayer::RendererLayer()
-		: m_EditorCamera(),
-		Layer("RendererLayer"),
-		m_Shader("assets/shaders/shader.vert", "assets/shaders/shader.frag")
+		: Layer("RendererLayer"), 
+		m_EditorCamera(),
+		m_Renderer(),
+		m_Shader("assets/shaders/framebufferShader.vert", "assets/shaders/framebufferShader.frag")
 	{
 		GB_INFO("RendererLayer::RendererLayer");
 	}
@@ -15,52 +16,14 @@ namespace Greenbox {
 	{
 		GB_INFO("RendererLayer::OnAttach   ", m_Name);
 
-
-
-
-
-
-
-		float vertices[] = {
-			 0.5f,  0.5f,  0.0f,  1.0f,  1.0f,  1.0f,
-			 0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,
-			-0.5f, -0.5f,  0.0f,  0.0f,  0.0f,  1.0f,
-			-0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f
-		};
-
-		//float vertices[] = {
-		//	 0.5f,  0.5f,  0.0f,  1.0f,  1.0f,  0.0f,
-		//	 0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,
-		//	-0.5f, -0.5f,  0.0f,  0.0f,  0.0f,  0.0f,
-		//	-0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f
-		//};
-
-		unsigned int indices[] = {
-			0, 1, 3,
-			1, 2, 3
-		};
-
 		glViewport(0, 0, 1280, 720);
-		glEnable(GL_DEPTH_TEST);
+		m_Renderer.SetupRenderState();
 
-		uint32_t VBO, EBO;
+		whiteTexture = Texture2D::Create(0xffffffff, 1, 1);
+		texture1 = Texture2D::Create("assets/imgs/xiaobei.jpg");
+		texture2 = Texture2D::Create("assets/imgs/quannai.jpg");
+		texture3 = Texture2D::Create("assets/imgs/yan.jpg");
 
-		glGenBuffers(1, &VBO);
-		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glGenVertexArrays(1, &VAO);
-		glBindVertexArray(VAO);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(0 * sizeof(float)));
-		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-		glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(5 * sizeof(float)));
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-
-		glGenBuffers(1, &EBO);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 	}
 
 	void RendererLayer::OnDetach()
@@ -71,27 +34,108 @@ namespace Greenbox {
 
 	void RendererLayer::OnUpdate()
 	{
+		uint32_t FBO;
+		glCreateFramebuffers(1, &FBO);
+		glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+		std::vector<uint32_t> m_ColorAttachments;
+		m_ColorAttachments.resize(2);
+		glCreateTextures(GL_TEXTURE_2D, 2, m_ColorAttachments.data());
+
+		glBindTexture(GL_TEXTURE_2D, m_ColorAttachments[0]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1280, 720, 0, GL_RGBA8, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_ColorAttachments[0], 0);
+
+		glBindTexture(GL_TEXTURE_2D, m_ColorAttachments[1]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_R32I, 1280, 720, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + 1, GL_TEXTURE_2D, m_ColorAttachments[1], 0);
+
+		uint32_t DepthTexture;
+		glCreateTextures(GL_TEXTURE_2D, 1, &DepthTexture);
+		glBindTexture(GL_TEXTURE_2D, DepthTexture);
+		glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, 1280, 720);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, DepthTexture, 0);
+
+		GLenum buffers[4] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3 };
+		glDrawBuffers(2, buffers);
+
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			GB_ASSERT(false, "ERROR::FRAMEBUFFER:: Framebuffer is not complete!");
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+		glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+		glViewport(0, 0, 1280, 720);
+
+
+
+
+
 		m_EditorCamera.OnUpdate();
 
+		m_Renderer.ClearScene();
+		m_Renderer.SetCamera(m_EditorCamera);
+
+		m_Renderer.AddQuad(glm::mat4(1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "assets/imgs/shi.jpg");
+
+		//m_Renderer.AddQuad(glm::mat4(1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "assets/imgs/shi.jpg");
+		//m_Renderer.AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "assets/imgs/yan.jpg");
+		//m_Renderer.AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), "assets/imgs/yan.jpg");
+		//m_Renderer.AddQuad(glm::mat4(1.0f), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), texture1);
+		//m_Renderer.AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), texture2);
+		//m_Renderer.AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), texture3);
+
+		
+		m_Renderer.Draw();
+
+
+
+
+
+		
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		m_Renderer.ClearScene();
+
 		m_Shader.Bind();
-		int32_t samplers[32];
-		for (uint32_t i = 0; i < 32; i++)
-			samplers[i] = i;
-		m_Shader.setIntArray("u_Texture", samplers, 32);
-		m_Shader.setMat4("u_ViewProjection", m_EditorCamera.GetViewProjection());
+		float quadVertices[] = {
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			-1.0f, -1.0f,  0.0f, 0.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
 
-
-		// white texture
-		Texture2D whiteTexture = Texture2D(0xff00ffff, 1, 1);
-		whiteTexture.Bind(0);
-		Texture2D texture = Texture2D("assets/imgs/xiaobei.jpg");
-		texture.Bind(1);
-
-		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-		glBindVertexArray(0);
+			-1.0f,  1.0f,  0.0f, 1.0f,
+			 1.0f, -1.0f,  1.0f, 0.0f,
+			 1.0f,  1.0f,  1.0f, 1.0f
+		};
+		unsigned int quadVAO, quadVBO;
+		glGenVertexArrays(1, &quadVAO);
+		glGenBuffers(1, &quadVBO);
+		glBindVertexArray(quadVAO);
+		glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+		glEnableVertexAttribArray(1);
+		glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+		glBindVertexArray(quadVAO);
+		glDisable(GL_DEPTH_TEST);
+		glBindTexture(GL_TEXTURE_2D, m_ColorAttachments[0]);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 	}
 
 	void RendererLayer::OnEvent(Event& e)
