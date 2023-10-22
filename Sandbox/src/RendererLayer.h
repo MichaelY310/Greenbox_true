@@ -18,11 +18,13 @@ namespace Greenbox {
 
 	private:
 		std::string m_Name;
-		uint32_t VAO;
-		Shader m_Shader;
+		Shader m_FramebufferShader;
+		Framebuffer m_Framebuffer;
+		Scene m_ActiveScene;
+
+		Entity squareEntity;
 
 		Camera m_EditorCamera;
-		Renderer m_Renderer;
 		std::shared_ptr<Texture2D> texture;
 		std::shared_ptr<Texture2D> whiteTexture;
 		std::shared_ptr<Texture2D> texture1;

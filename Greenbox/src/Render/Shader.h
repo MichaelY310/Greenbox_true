@@ -10,6 +10,7 @@ namespace Greenbox {
 	class Shader {
 
 	public:
+		Shader() = default;
 		Shader(const char* vertPath, const char* fragPath);
 		~Shader() = default;
 

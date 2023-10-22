@@ -16,7 +16,7 @@ namespace Greenbox {
 		m_Window = std::make_unique<Window>(appName, 1280, 720);
 		m_Window->SetEventCallbackFn(GB_BIND_FUNCTION(Application::OnEvent));
 
-		//Renderer::Init();
+		Renderer::Init();
 	}
 
 	Application::~Application()

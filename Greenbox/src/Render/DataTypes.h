@@ -67,20 +67,31 @@ namespace Greenbox {
     // Texture
     enum class TextureDataType
     {
+        None,
+
         // Color
+        RGB,
+        RGB8,
+        RGBA,
         RGBA8,
+        R32I,
         RED_INTEGER,
 
         // Depth
-        DEPTH24STENCIL8,
+        DEPTH24_STENCIL8,
     };
 
     static GLenum OpenGLDataType(TextureDataType dataType)
     {
         switch (dataType)
         {
+        case TextureDataType::RGB: return GL_RGB;
+        case TextureDataType::RGB8: return GL_RGB8;
+        case TextureDataType::RGBA: return GL_RGBA;
         case TextureDataType::RGBA8: return GL_RGBA8;
+        case TextureDataType::R32I: return GL_R32I;
         case TextureDataType::RED_INTEGER: return GL_RED_INTEGER;
+        case TextureDataType::DEPTH24_STENCIL8: return GL_DEPTH24_STENCIL8;
         }
 
         GB_ASSERT(false, "Greenbox doesn't support this dataType");

@@ -1,0 +1,35 @@
+#pragma once
+
+#include "entt.hpp"
+
+namespace Greenbox {
+
+	class Entity;
+
+	class Scene
+	{
+	public:
+		Scene() = default;
+		Scene(uint32_t width, uint32_t height)
+			:m_ViewportWidth(width), m_ViewportHeight(height), m_Registry() {}
+		~Scene() = default;
+
+		void OnUpdate();
+
+		Entity CreateEntity(const std::string& name = "Untitled");
+		void DestroyEntity(Entity entity);
+
+	private:
+		template<typename T>
+		void OnComponentAdded(Entity entity, T& component);
+	private:
+		entt::registry m_Registry;
+
+		uint32_t m_ViewportWidth = 1280;
+		uint32_t m_ViewportHeight = 720;
+
+
+		friend class Entity;
+	};
+
+}
