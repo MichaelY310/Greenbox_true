@@ -3,6 +3,7 @@
 #include <memory>
 #include "Window.h"
 #include "Layer.h"
+#include "ImGui/ImGuiLayer.h"
 
 namespace Greenbox {
 
@@ -37,6 +38,7 @@ namespace Greenbox {
 	private:
 		static Application* s_Instance;		// this is defined in Application::Application
 		LayerStack m_LayerStack;
+		ImGuiLayer* m_ImGuiLayer;
 	};
 
 

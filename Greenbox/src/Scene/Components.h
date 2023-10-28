@@ -51,10 +51,25 @@ namespace Greenbox {
 		SpriteRendererComponent(const glm::vec4& color) : Color(color) {}
 	};
 
-
 	struct QuadRendererComponent
 	{
+		glm::vec4 Color = { 1.0, 1.0, 1.0, 1.0 };
+
 		QuadRendererComponent() = default;
+		QuadRendererComponent(const QuadRendererComponent&) = default;
+		QuadRendererComponent(const glm::vec4& color) : Color(color) {}
+
+
+	};
+
+	struct TriangleRendererComponent
+	{
+		glm::vec4 Color = { 1.0, 1.0, 1.0, 1.0 };
+
+		TriangleRendererComponent() = default;
+		TriangleRendererComponent(const TriangleRendererComponent&) = default;
+		TriangleRendererComponent(const glm::vec4& color) : Color(color) {}
+
 
 	};
 }

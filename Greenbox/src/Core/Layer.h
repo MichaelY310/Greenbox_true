@@ -11,10 +11,11 @@ namespace Greenbox {
 	public:
 		Layer(const std::string name) : m_Name(name) { }
 		virtual ~Layer() = default;
-		virtual void OnAttach() = 0;
-		virtual void OnDetach() = 0;
-		virtual void OnUpdate() = 0;
-		virtual void OnEvent(Event& e) = 0;
+		virtual void OnAttach() {}; 
+		virtual void OnDetach() {};
+		virtual void OnUpdate() {};
+		virtual void OnImGuiRender() {};
+		virtual void OnEvent(Event& e) {};
 		const std::string GetName() { return m_Name; }
 	private:
 		std::string m_Name;

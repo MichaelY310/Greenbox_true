@@ -9,26 +9,37 @@ namespace Greenbox {
 
 	void Scene::OnUpdate()
 	{
-		auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
-		for (auto entity : group)
 		{
-			auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-			Renderer::AddQuad(transform.GetTransform(), sprite.Color, nullptr, (int)entity);
+			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
+			for (auto entity : group)
+			{
+				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
+				Renderer::AddQuad(transform.GetTransform(), sprite.Color, nullptr, (int)entity);
+			}
+		}
+
+		{
+			auto view = m_Registry.view<TransformComponent, TriangleRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, triangle] = view.get<TransformComponent, TriangleRendererComponent>(entity);
+				Renderer::AddTriangle(transform.GetTransform(), triangle.Color, nullptr, (int)entity);
+			}
 		}
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)
 	{
-		//Entity entity = Entity(m_Registry.create(), this);
-		//entity.AddComponent<NameComponent>(name);
-		//entity.AddComponent<TransformComponent>();
-		//return entity;
-
-		Entity entity = { m_Registry.create(), this };
+		Entity entity = Entity(m_Registry.create(), this);
+		entity.AddComponent<NameComponent>(name);
 		entity.AddComponent<TransformComponent>();
-		auto& tag = entity.AddComponent<NameComponent>();
-		tag.Name = name.empty() ? "Entity" : name;
 		return entity;
+
+		//Entity entity = { m_Registry.create(), this };
+		//entity.AddComponent<TransformComponent>();
+		//auto& tag = entity.AddComponent<NameComponent>();
+		//tag.Name = name.empty() ? "Entity" : name;
+		//return entity;
 	}
 
 	void Scene::DestroyEntity(Entity entity)
@@ -61,4 +72,9 @@ namespace Greenbox {
     void Scene::OnComponentAdded<QuadRendererComponent>(Entity entity, QuadRendererComponent& component)
     {
     }
+
+	template<>
+	void Scene::OnComponentAdded<TriangleRendererComponent>(Entity entity, TriangleRendererComponent& component)
+	{
+	}
 }

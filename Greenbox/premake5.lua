@@ -57,7 +57,7 @@ project "Greenbox"
     }
 
     filter "files:Dependencies/ImGuizmo/**.cpp"
-    flags { "NoPCH" }
+        flags { "NoPCH" }
 
     filter "system:window"
         systemversion "latest"

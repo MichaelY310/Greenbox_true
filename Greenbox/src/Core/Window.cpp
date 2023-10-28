@@ -23,9 +23,6 @@ namespace Greenbox {
 		}
 
 		// Initialize GLFWwindow
-		//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-		//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 		m_GLFWwindow = glfwCreateWindow(m_Width, m_Height, m_Title.c_str(), NULL, NULL);
 		if (m_GLFWwindow == NULL)
 		{

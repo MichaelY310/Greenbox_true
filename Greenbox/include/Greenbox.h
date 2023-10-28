@@ -4,6 +4,8 @@
 #include "Core/Input.h"
 #include "Core/Application.h"
 
+#include "ImGui/ImGuiLayer.h"
+
 #include "Render/Shader.h"
 #include "Render/Texture2D.h"
 #include "Render/Camera.h"

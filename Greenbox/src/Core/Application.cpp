@@ -17,6 +17,9 @@ namespace Greenbox {
 		m_Window->SetEventCallbackFn(GB_BIND_FUNCTION(Application::OnEvent));
 
 		Renderer::Init();
+
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverLay(m_ImGuiLayer);
 	}
 
 	Application::~Application()
@@ -33,6 +36,13 @@ namespace Greenbox {
 			{
 				layer->OnUpdate();
 			}
+
+			m_ImGuiLayer->Begin();
+			{
+				for (Layer* layer : m_LayerStack)
+					layer->OnImGuiRender();
+			}
+			m_ImGuiLayer->End();
 
 			m_Window->OnUpdate();
 		}

@@ -1,4 +1,5 @@
 #include "RendererLayer.h"
+#include "imgui/imgui.h"
 
 namespace Greenbox {
 
@@ -26,7 +27,10 @@ namespace Greenbox {
 		texture3 = Texture2D::Create("assets/imgs/yan.jpg");
 
 		squareEntity = m_ActiveScene.CreateEntity("square");
-		squareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+		//squareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+
+		triangleEntity = m_ActiveScene.CreateEntity("triangle");
+		triangleEntity.AddComponent<TriangleRendererComponent>(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
 	}
 
 	void RendererLayer::OnDetach()
@@ -46,6 +50,7 @@ namespace Greenbox {
 
 		m_ActiveScene.OnUpdate();
 		//Renderer::AddQuad(glm::mat4(1.0f), glm::vec4(1.0f, 0.5f, 1.0f, 1.0f), texture1);
+		Renderer::AddTriangle(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), texture1);
 		Renderer::AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), texture2);
 		Renderer::AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), texture3);
 		

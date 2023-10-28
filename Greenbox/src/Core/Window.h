@@ -22,6 +22,8 @@ namespace Greenbox {
 		void SetEventCallbackFn(std::function<void(Event&)> fn) { m_WindowData.EventCallbackFn = fn; }
 
 		std::string GetTitle() { return m_Title; }
+		uint32_t GetWidth() { return m_Width; }
+		uint32_t GetHeight() { return m_Height; }
 	private:
 		struct WindowData
 		{

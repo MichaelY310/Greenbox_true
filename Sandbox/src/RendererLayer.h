@@ -1,5 +1,4 @@
 #pragma once
-#include "Core/layer.h"
 #include "Greenbox.h"
 #include <glad/glad.h>
 
@@ -23,6 +22,7 @@ namespace Greenbox {
 		Scene m_ActiveScene;
 
 		Entity squareEntity;
+		Entity triangleEntity;
 
 		Camera m_EditorCamera;
 		std::shared_ptr<Texture2D> texture;
