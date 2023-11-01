@@ -3,12 +3,28 @@
 
 namespace Greenbox {
 
-	Framebuffer::Framebuffer(TextureDataType depthAttachmentType, 
-		std::vector<std::pair<TextureDataType, TextureDataType>> colorAttachmentTypes, 
+	Framebuffer::Framebuffer(TextureDataType depthAttachmentType,
+		std::vector<std::pair<TextureDataType, TextureDataType>> colorAttachmentTypes,
 		uint32_t width, uint32_t height)
-		: m_DepthAttachmentType(depthAttachmentType), m_ColorAttachmentTypes(colorAttachmentTypes), 
+		: m_DepthAttachmentType(depthAttachmentType), m_ColorAttachmentTypes(colorAttachmentTypes),
 		m_Width(width), m_Height(height)
 	{
+		Initialize();
+	}
+
+	void Framebuffer::Initialize()
+	{
+		// Replace the original attachments so that the width and height of storage changes
+		if (m_RendererID)
+		{
+			glDeleteFramebuffers(1, &m_RendererID);
+			glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+			glDeleteTextures(1, &m_DepthAttachment);
+
+			m_ColorAttachments.clear();
+			m_DepthAttachment = 0;
+		}
+
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
@@ -18,7 +34,7 @@ namespace Greenbox {
 			glCreateTextures(GL_TEXTURE_2D, 1, &m_DepthAttachment);
 
 			glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
-			glTexStorage2D(GL_TEXTURE_2D, 1, OpenGLDataType(m_DepthAttachmentType), 1280, 720);
+			glTexStorage2D(GL_TEXTURE_2D, 1, OpenGLDataType(m_DepthAttachmentType), m_Width, m_Height);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -83,6 +99,7 @@ namespace Greenbox {
 	{
 		m_Width = width;
 		m_Height = height;
+		Initialize();
 	}
 
 	int Framebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)

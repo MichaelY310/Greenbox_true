@@ -19,6 +19,11 @@ namespace Greenbox {
 		Entity CreateEntity(const std::string& name = "Untitled");
 		void DestroyEntity(Entity entity);
 
+		void SetViewportSize(uint32_t width, uint32_t height) {
+			m_ViewportWidth = width; 
+			m_ViewportHeight = height;
+		};
+
 	private:
 		template<typename T>
 		void OnComponentAdded(Entity entity, T& component);
@@ -30,6 +35,7 @@ namespace Greenbox {
 
 
 		friend class Entity;
+		friend class EntityInspectorPanel;
 	};
 
 }

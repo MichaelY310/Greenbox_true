@@ -81,9 +81,6 @@ namespace Greenbox {
 			glm::vec2(1.0f, 1.0f) };
 
 
-
-
-
 		uint32_t TextureSlotIndex = 1;
 		std::array<std::shared_ptr<Texture2D>, MaxTextureSlots> m_TextureBatch;
 		std::array<std::string, MaxTextureSlots> m_TextureBatchPaths;
@@ -156,6 +153,11 @@ namespace Greenbox {
 	{
 		glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
+	void Renderer::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	{
+		glViewport(x, y, width, height);
 	}
 
 	void Renderer::SetupRenderState()
@@ -323,6 +325,17 @@ namespace Greenbox {
 		}
 		GB_INFO("///////////////////////////");
 	}
+
+	uint32_t Renderer::GetQuadIndexCount()
+	{
+		return s_Data.QuadIndexCount;
+	}
+
+	uint32_t Renderer::GetTriangleIndexCount()
+	{
+		return s_Data.TriangleIndexCount;
+	}
+
 
 	int Renderer::HasTextureID(uint32_t RendererID)
 	{

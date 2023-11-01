@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Core/Input.h"
 #include "Core/Utils.h"
+#include "Core/Log.h"
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
@@ -26,12 +27,6 @@ namespace Greenbox {
 
 	void Camera::OnUpdate()
 	{
-		if (Input::IsKeyPressed(GLFW_KEY_1))
-		{
-			GB_INFO("{0}, {1}, {2}", m_Position.x, m_Position.y, m_Position.z);
-		}
-
-
 
 		if (Input::IsKeyPressed(GLFW_KEY_Q))
 		{
@@ -89,7 +84,7 @@ namespace Greenbox {
 
 	void Camera::UpdateProjection()
 	{
-		m_AspectRatio = m_ViewportWidth / m_ViewportHeight;
+		m_AspectRatio = (float)m_ViewportWidth / (float)m_ViewportHeight;
 		m_Projection = glm::perspective(m_FOV, m_AspectRatio, m_NearClip, m_FarClip);
 	}
 

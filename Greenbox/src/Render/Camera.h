@@ -32,6 +32,12 @@ namespace Greenbox {
 		glm::vec3 Right() const;
 		glm::vec3 Forward() const;
 
+		void SetViewportSize(uint32_t width, uint32_t height) {
+			m_ViewportWidth = width;
+			m_ViewportHeight = height;
+			UpdateProjection();
+		};
+
 	private:
 		glm::mat4 m_Projection;
 		glm::mat4 m_View;
@@ -39,7 +45,8 @@ namespace Greenbox {
 		glm::vec3 m_Position = glm::vec3(0.0f, 0.0f, 1.0f);
 		float m_Pitch = 0.0f, m_Yaw = 0.0f;	// -z
 
-		float m_ViewportWidth = 1280, m_ViewportHeight = 720;
+		uint32_t m_ViewportWidth = 1280;
+		uint32_t m_ViewportHeight = 720;
 		float m_FOV = 45.0f;
 		float m_AspectRatio = 1.778f;
 		float m_NearClip = 0.1f;

@@ -11,11 +11,15 @@ namespace Greenbox {
 		Framebuffer(TextureDataType depthAttachmentType, std::vector<std::pair<TextureDataType, TextureDataType>> colorAttachmentTypes, uint32_t width = 1280, uint32_t height = 720);
 		~Framebuffer();
 
+		void Initialize();
+
 		void Bind();
 		void Unbind();
 
 		uint32_t GetColorAttachment(int id) { return m_ColorAttachments[id]; };
 		uint32_t GetDepthAttachment(int id) { return m_DepthAttachment; };
+		uint32_t GetWidth() { return m_Width; };
+		uint32_t GetHeight() { return m_Height; };
 
 		void Resize(uint32_t width, uint32_t height);
 		int ReadPixel(uint32_t attachmentIndex, int x, int y);

@@ -13,6 +13,7 @@ namespace Greenbox {
 		static void Shutdown();
 
 		static void ClearScene();
+		static void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height);
 		static void SetupRenderState();
 		static void SetCamera(Camera camera);
 		static void Draw();
@@ -28,6 +29,9 @@ namespace Greenbox {
 			const int entityID = -1);
 
 		static void PrintTextureInBatch();
+
+		static uint32_t GetQuadIndexCount();
+		static uint32_t GetTriangleIndexCount();
 
 	private:
 		static int HasTextureID(uint32_t RendererID);
