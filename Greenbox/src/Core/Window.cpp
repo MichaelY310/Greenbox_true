@@ -66,6 +66,26 @@ namespace Greenbox {
 				MouseScrollEvent event = MouseScrollEvent((float)xOffset, (float)yOffset);
 				currentWindowData.EventCallbackFn(event);
 			});
+
+		glfwSetMouseButtonCallback(m_GLFWwindow, [](GLFWwindow* window, int button, int action, int mods)
+			{
+				WindowData& currentWindowData = *(WindowData*)glfwGetWindowUserPointer(window);
+				switch (action)
+				{
+					case GLFW_PRESS:
+					{
+						MouseButtonPressedEvent event(button);
+						currentWindowData.EventCallbackFn(event);
+						break;
+					}
+					case GLFW_RELEASE:
+					{
+						MouseButtonReleasedEvent event(button);
+						currentWindowData.EventCallbackFn(event);
+						break;
+					}
+				}
+			});
 	}
 
 	Window::~Window()

@@ -59,12 +59,25 @@ namespace Greenbox {
 		Renderer::ClearScene();
 		Renderer::SetCamera(m_EditorCamera);
 
+		m_Framebuffer.ClearColorAttachment(1, -1);
+
 		m_ActiveScene->OnUpdate();
 		Renderer::AddTriangle(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), texture1);
 		Renderer::AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), texture2);
 		Renderer::AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), texture3);
 		
 		Renderer::Draw();
+
+		// Select Entity
+		if (m_ViewportMousePos.x >= 0 && m_ViewportMousePos.y >= 0 && m_ViewportMousePos.x < m_ViewportSize.x && m_ViewportMousePos.y < m_ViewportSize.y)
+		{
+			int pixelData = m_Framebuffer.ReadPixel(1, m_ViewportMousePos.x, m_ViewportMousePos.y);
+			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
+		}
+		else
+		{
+			m_HoveredEntity = Entity();
+		}
 
 		m_Framebuffer.Unbind();
 	}
@@ -88,6 +101,9 @@ namespace Greenbox {
 		}
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
+
+
+		// Docking
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
@@ -128,20 +144,59 @@ namespace Greenbox {
 			ImGui::EndMenuBar();
 		}
 
-
+		// Panel
 		m_EntityInspectorPanel.OnImGuiRender();
 
-		ImGui::Begin("Settings");
-		ImGui::Text("QuadIndexCount: %d", Renderer::GetQuadIndexCount());
-		ImGui::Text("TriangleIndexCount: %d", Renderer::GetTriangleIndexCount());
+		// Viewport
+			// Update viewport related variables
+		ImGui::Begin("Viewport");
+		m_ViewportSizeInitialized = m_ViewportSizeInitialized == 0 ? 1 : m_ViewportSizeInitialized;
+
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		m_ViewportHovered = ImGui::IsWindowHovered();
+
+		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+		m_ViewportSize = { viewportSize.x, viewportSize.y };
+
+		ImVec2 viewportOffset = ImGui::GetCursorPos();
+		m_ViewportOffset = { viewportOffset.x, viewportOffset.y };
+
+		ImVec2 viewportWindowSize = ImGui::GetWindowSize();
+		m_ViewportWindowSize = { viewportWindowSize.x, viewportWindowSize.y };
+
+		ImVec2 viewportWindowPos = ImGui::GetWindowPos();
+		m_ViewportMinBound = { viewportWindowPos.x + m_ViewportOffset.x, viewportWindowPos.y + m_ViewportOffset.y };
+		m_ViewportMaxBound = m_ViewportWindowSize + m_ViewportMinBound;
+
+		ImVec2 mousePos = ImGui::GetMousePos();
+		m_ViewportMousePos = { mousePos.x - m_ViewportMinBound.x, m_ViewportSize.y - mousePos.y + m_ViewportMinBound.y };
+
+			// Display Framebuffer
+		ImGui::Image((void*)(m_Framebuffer.GetColorAttachment(0)), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1,0 });
 		ImGui::End();
 
-		ImGui::Begin("Viewport");
-		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
-		// Update viewport size
-		m_ViewportSize = { viewportSize.x, viewportSize.y };
-		m_ViewportSizeInitialized = m_ViewportSizeInitialized == 0 ? 1 : m_ViewportSizeInitialized;
-		ImGui::Image((void*)(m_Framebuffer.GetColorAttachment(0)), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1,0 });
+		
+		// Debugging Info
+		ImGui::Begin("Window & Viewport info");
+		ImGui::Text("ViewportFocused: %s", m_ViewportFocused ? "True" : "False");
+		ImGui::Text("ViewportHovered: %s", m_ViewportHovered ? "True" : "False");
+		ImGui::Text("ViewportSize: %f, %f", m_ViewportSize.x, m_ViewportSize.y);
+		ImGui::Text("ViewportOffset: %f, %f", m_ViewportOffset.x, m_ViewportOffset.y);
+		ImGui::Text("ViewportWindowSize: %f, %f", m_ViewportWindowSize.x, m_ViewportWindowSize.y);
+		ImGui::Text("ViewportMinBound: %f, %f", m_ViewportMinBound.x, m_ViewportMinBound.y);
+		ImGui::Text("Viewport MaxBound: %f, %f", m_ViewportMaxBound.x, m_ViewportMaxBound.y);
+		ImGui::Text("Viewport Mouse Position: %f, %f", m_ViewportMousePos.x, m_ViewportMousePos.y);
+		//ImGui::Text("Hovered Entity: %s", m_HoveredEntity ? m_HoveredEntity.GetComponent<NameComponent>().Name : "None");
+		std::string name = "None";
+		if (m_HoveredEntity)
+			name = m_HoveredEntity.GetComponent<NameComponent>().Name;
+		ImGui::Text("Hovered Entity: %s", name.c_str());
+		ImGui::End();
+
+		// Render Info
+		ImGui::Begin("Render Info");
+		ImGui::Text("QuadIndexCount: %d", Renderer::GetQuadIndexCount());
+		ImGui::Text("TriangleIndexCount: %d", Renderer::GetTriangleIndexCount());
 		ImGui::End();
 
 		ImGui::End();
@@ -151,6 +206,19 @@ namespace Greenbox {
 	{
 		//GB_INFO("RendererLayer::OnEvent   ", m_Name);
 		m_EditorCamera.OnEvent(e);
+		dispatcher.Dispatch<MouseButtonPressedEvent>(e, GB_BIND_FUNCTION(RendererLayer::OnMouseButtonPressed));
+	}
+
+	bool RendererLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
+	{
+		//GB_INFO("RendererLayer::OnMouseButtonPressed {0}", e.GetButton());
+		if (e.GetButton() == 0)
+		{
+			if (m_HoveredEntity)
+				m_EntityInspectorPanel.SetSelectedEntity(m_HoveredEntity);
+		}
+
+		return false;
 	}
 
 }

@@ -20,4 +20,36 @@ namespace Greenbox {
 	private:
 		float m_MouseX, m_MouseY;
 	};
+
+	class MouseButtonPressedEvent : public Event
+	{
+	public:
+		EventType GetEventType() const { return EventType::MouseButtonPressed; }
+		static EventType GetClassEventType() { return EventType::MouseButtonPressed; }
+
+		MouseButtonPressedEvent(int button)
+			: m_Button(button)
+		{
+		}
+
+		int GetButton() const { return m_Button; }
+	private:
+		int m_Button;
+	};
+
+	class MouseButtonReleasedEvent : public Event
+	{
+	public:
+		EventType GetEventType() const { return EventType::MouseButtonReleased; }
+		static EventType GetClassEventType() { return EventType::MouseButtonReleased; }
+
+		MouseButtonReleasedEvent(int button)
+			: m_Button(button)
+		{
+		}
+
+		int GetButton() const { return m_Button; }
+	private:
+		int m_Button;
+	};
 }

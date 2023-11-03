@@ -3,6 +3,7 @@
 #include "Core/Log.h"
 #include "Core/Input.h"
 #include "Core/Application.h"
+#include "Core/Utils.h"
 
 #include "ImGui/ImGuiLayer.h"
 

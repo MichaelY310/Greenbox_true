@@ -14,6 +14,7 @@ namespace Greenbox {
         EntityInspectorPanel(const std::shared_ptr<Scene>& scene);
 
         void SetScene(const std::shared_ptr<Scene>& scene);
+        void SetSelectedEntity(Entity entity) { m_SelectedEntity = entity; };
 
         void OnImGuiRender();
 

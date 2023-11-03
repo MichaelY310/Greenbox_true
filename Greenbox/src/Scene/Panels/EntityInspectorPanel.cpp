@@ -82,7 +82,6 @@ namespace Greenbox {
 
         if (opened)
         {
-            GB_INFO(name);
             ImGuiTreeNodeFlags testFlag = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_SpanAvailWidth;
             bool testOpened = ImGui::TreeNodeEx((void*)114514, testFlag, name.c_str());
             if (testOpened)
@@ -230,7 +229,12 @@ namespace Greenbox {
         
         if (ImGui::BeginPopup("Add Component"))
         {
-            if (ImGui::MenuItem("Triangle Renderer"))
+            if (ImGui::MenuItem("Sprite Renderer"))
+            {
+                entity.AddComponent<SpriteRendererComponent>();
+                ImGui::CloseCurrentPopup();
+            }
+            else if (ImGui::MenuItem("Triangle Renderer"))
             {
                 entity.AddComponent<TriangleRendererComponent>();
                 ImGui::CloseCurrentPopup();
@@ -250,13 +254,22 @@ namespace Greenbox {
             DrawVec3Control("Translation", component.Translation);
             glm::vec3 rotation = glm::degrees(component.Rotation);
             DrawVec3Control("Rotation", rotation);
-            component.Rotation = rotation;
+            component.Rotation = glm::radians(rotation);
             DrawVec3Control("Scale", component.Scale, 1.0f);
+        });
+
+        DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component) {
+            ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
         });
 
         DrawComponent<TriangleRendererComponent>("Triangle Renderer", entity, [](auto& component) {
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
         });
+
+        DrawComponent<QuadRendererComponent>("Quad Renderer", entity, [](auto& component) {
+            ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+        });
+
     }
 
 }

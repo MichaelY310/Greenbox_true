@@ -19,6 +19,15 @@ namespace Greenbox {
 		}
 
 		{
+			auto view = m_Registry.view<TransformComponent, QuadRendererComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, quad] = view.get<TransformComponent, QuadRendererComponent>(entity);
+				Renderer::AddQuad(transform.GetTransform(), quad.Color, nullptr, (int)entity);
+			}
+		}
+
+		{
 			auto view = m_Registry.view<TransformComponent, TriangleRendererComponent>();
 			for (auto entity : view)
 			{

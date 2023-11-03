@@ -115,7 +115,7 @@ namespace Greenbox {
 	{
 		GB_ASSERT(colorAttachmentIndex < m_ColorAttachments.size(), "out of range");
 		glClearTexImage(m_ColorAttachments[colorAttachmentIndex], 0,
-			OpenGLDataType(m_ColorAttachmentTypes[colorAttachmentIndex].first), GL_INT, &value);
+			OpenGLDataType(m_ColorAttachmentTypes[colorAttachmentIndex].second), GL_INT, &value);
 	}
 
 }
