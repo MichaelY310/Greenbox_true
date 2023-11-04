@@ -18,6 +18,7 @@ namespace Greenbox {
 
 	private:
 		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
+		bool OnKeyPressed(KeyPressedEvent& e);
 
 	private:
 		std::string m_Name;
@@ -50,6 +51,12 @@ namespace Greenbox {
 	// panel
 	private:
 		EntityInspectorPanel m_EntityInspectorPanel;
+
+	// ImGizmo
+	private:
+		int m_GuizmoType = -1;
+		bool m_Snap = false;
+		float m_SnapValue = 0.5f;
 	};
 
 }

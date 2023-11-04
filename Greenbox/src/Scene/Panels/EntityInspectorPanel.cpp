@@ -49,7 +49,7 @@ namespace Greenbox {
 
 
         // Entity Components Panel
-        ImGui::Begin("Entity Components Panel");
+        ImGui::Begin("Entity Components");
         if (m_SelectedEntity)
         {
             DrawComponents(m_SelectedEntity);

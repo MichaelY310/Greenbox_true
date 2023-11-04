@@ -1,11 +1,12 @@
 #include "RendererLayer.h"
 #include "imgui/imgui.h"
+#include "ImGuizmo.h"
 
 namespace Greenbox {
 
 
 	RendererLayer::RendererLayer()
-		: Layer("RendererLayer"), 
+		: Layer("RendererLayer"),
 		m_EditorCamera(),
 		m_Framebuffer(TextureDataType::DEPTH24_STENCIL8, { { TextureDataType::RGBA8, TextureDataType::RGBA }, { TextureDataType::R32I, TextureDataType::RED_INTEGER } }),
 		m_ActiveScene(std::make_shared<Scene>(1280, 720)),
@@ -65,7 +66,7 @@ namespace Greenbox {
 		Renderer::AddTriangle(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), texture1);
 		Renderer::AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), texture2);
 		Renderer::AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), texture3);
-		
+
 		Renderer::Draw();
 
 		// Select Entity
@@ -84,6 +85,7 @@ namespace Greenbox {
 
 	void RendererLayer::OnImGuiRender()
 	{
+		// ImGui Setup
 		static bool dockspaceOpen = true;
 		static bool opt_fullscreen = true;
 		static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -101,16 +103,12 @@ namespace Greenbox {
 		}
 		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
 			window_flags |= ImGuiWindowFlags_NoBackground;
-
-
 		// Docking
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 		ImGui::Begin("DockSpace Demo", &dockspaceOpen, window_flags);
 		ImGui::PopStyleVar();
-
 		if (opt_fullscreen)
 			ImGui::PopStyleVar(2);
-
 		ImGuiIO& io = ImGui::GetIO();
 		ImGuiStyle& style = ImGui::GetStyle();
 		float minWinSizeX = style.WindowMinSize.x;
@@ -123,6 +121,7 @@ namespace Greenbox {
 		style.WindowMinSize.x = minWinSizeX;
 
 
+		// Menu
 		if (ImGui::BeginMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -131,14 +130,14 @@ namespace Greenbox {
 				if (ImGui::MenuItem("New", "Ctrl+N"))
 					//NewScene();
 				// Open     create new scene and deserialize scene file
-				if (ImGui::MenuItem("Open...", "Ctrl+O"))
-					//OpenScene();
-				// Save     serialize scene file
-				if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
-					//SaveSceneAs();
-				// Exit
-				if (ImGui::MenuItem("Exit")) 
-					Application::GetInstance().Stop();
+					if (ImGui::MenuItem("Open...", "Ctrl+O"))
+						//OpenScene();
+					// Save     serialize scene file
+						if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S"))
+							//SaveSceneAs();
+						// Exit
+							if (ImGui::MenuItem("Exit"))
+								Application::GetInstance().Stop();
 				ImGui::EndMenu();
 			}
 			ImGui::EndMenuBar();
@@ -173,9 +172,44 @@ namespace Greenbox {
 
 			// Display Framebuffer
 		ImGui::Image((void*)(m_Framebuffer.GetColorAttachment(0)), ImVec2{ m_ViewportSize.x, m_ViewportSize.y }, ImVec2{ 0,1 }, ImVec2{ 1,0 });
+
+
+
+
+
+			// Select Entity
+			// ImGizmo
+		Entity selectedEntity = m_EntityInspectorPanel.GetSelectedEntity();
+		if (selectedEntity && m_GuizmoType != -1)
+		{
+				// Set snap values
+			m_Snap = Input::IsKeyPressed(GLFW_KEY_LEFT_CONTROL);
+			m_SnapValue = m_GuizmoType == ImGuizmo::OPERATION::ROTATE ? 45.0f : 0.5f;
+			float SnapValues[3] = { m_SnapValue, m_SnapValue, m_SnapValue };
+				// Transform will be manipulated
+			TransformComponent& transformComponent = selectedEntity.GetComponent<TransformComponent>();
+			glm::mat4 transform = transformComponent.GetTransform();
+				// ImGuizmo Setup
+			ImGuizmo::SetOrthographic(false);
+			ImGuizmo::SetDrawlist();
+			ImGuizmo::SetRect(m_ViewportMinBound.x, m_ViewportMinBound.y, m_ViewportSize.x, m_ViewportSize.y);
+			ImGuizmo::Manipulate(glm::value_ptr(m_EditorCamera.GetView()), glm::value_ptr(m_EditorCamera.GetProjection()),
+				(ImGuizmo::OPERATION)m_GuizmoType, ImGuizmo::LOCAL, glm::value_ptr(transform),
+				nullptr, m_Snap ? SnapValues : nullptr);
+				// Update Manipulation
+			if (ImGuizmo::IsUsing())
+			{
+				glm::vec3 translation, rotation, scaling;
+				DecomposeTransform(transform, translation, rotation, scaling);
+				transformComponent.Translation = translation;
+				transformComponent.Rotation = rotation;
+				transformComponent.Scale = scaling;
+			}
+		}
+
 		ImGui::End();
 
-		
+
 		// Debugging Info
 		ImGui::Begin("Window & Viewport info");
 		ImGui::Text("ViewportFocused: %s", m_ViewportFocused ? "True" : "False");
@@ -186,11 +220,7 @@ namespace Greenbox {
 		ImGui::Text("ViewportMinBound: %f, %f", m_ViewportMinBound.x, m_ViewportMinBound.y);
 		ImGui::Text("Viewport MaxBound: %f, %f", m_ViewportMaxBound.x, m_ViewportMaxBound.y);
 		ImGui::Text("Viewport Mouse Position: %f, %f", m_ViewportMousePos.x, m_ViewportMousePos.y);
-		//ImGui::Text("Hovered Entity: %s", m_HoveredEntity ? m_HoveredEntity.GetComponent<NameComponent>().Name : "None");
-		std::string name = "None";
-		if (m_HoveredEntity)
-			name = m_HoveredEntity.GetComponent<NameComponent>().Name;
-		ImGui::Text("Hovered Entity: %s", name.c_str());
+		ImGui::Text("Hovered Entity: %s", bool(m_HoveredEntity) ? m_HoveredEntity.GetComponent<NameComponent>().Name.c_str() : "None");
 		ImGui::End();
 
 		// Render Info
@@ -207,6 +237,7 @@ namespace Greenbox {
 		//GB_INFO("RendererLayer::OnEvent   ", m_Name);
 		m_EditorCamera.OnEvent(e);
 		dispatcher.Dispatch<MouseButtonPressedEvent>(e, GB_BIND_FUNCTION(RendererLayer::OnMouseButtonPressed));
+		dispatcher.Dispatch<KeyPressedEvent>(e, GB_BIND_FUNCTION(RendererLayer::OnKeyPressed));
 	}
 
 	bool RendererLayer::OnMouseButtonPressed(MouseButtonPressedEvent& e)
@@ -216,6 +247,30 @@ namespace Greenbox {
 		{
 			if (m_HoveredEntity)
 				m_EntityInspectorPanel.SetSelectedEntity(m_HoveredEntity);
+		}
+
+		return false;
+	}
+
+	bool RendererLayer::OnKeyPressed(KeyPressedEvent& e)
+	{
+		//GB_INFO("RendererLayer::OnMouseButtonPressed {0}", e.GetButton());
+		if (e.GetRepeatCount() == 1)
+			return false;
+
+		int keyCode = e.GetKeyCode();
+
+		switch (keyCode)
+		{
+			case GLFW_KEY_Z:
+				m_GuizmoType = ImGuizmo::OPERATION::TRANSLATE;
+				break;
+			case GLFW_KEY_X:
+				m_GuizmoType = ImGuizmo::OPERATION::ROTATE;
+				break;
+			case GLFW_KEY_C:
+				m_GuizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
 		}
 
 		return false;

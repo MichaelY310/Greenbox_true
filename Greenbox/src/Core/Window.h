@@ -4,6 +4,7 @@
 #include <functional>
 #include "Event/ApplicationEvent.h"
 #include "Event/MouseEvent.h"
+#include "Event/KeyEvent.h"
 #include "Core/Log.h"
 
 #include <glad/glad.h>
