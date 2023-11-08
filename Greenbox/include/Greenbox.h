@@ -17,3 +17,4 @@
 #include "Scene/Entity.h"
 #include "Scene/Components.h"
 #include "Scene/Panels/EntityInspectorPanel.h"
+#include "Scene/Panels/FileBrowserPanel.h"

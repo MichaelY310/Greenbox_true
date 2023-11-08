@@ -64,7 +64,12 @@ namespace Greenbox {
 
 	void ImGuiLayer::OnEvent(Event& e)
 	{
-		
+		if (m_Block)
+		{
+			ImGuiIO& io = ImGui::GetIO();
+			e.m_Handled |= e.IsMouseEvent() & io.WantCaptureMouse;
+			e.m_Handled |= e.IsKeyEvent() & io.WantCaptureKeyboard;
+		}
 	}
 
 	void ImGuiLayer::Begin()

@@ -1,6 +1,7 @@
 #include "RendererLayer.h"
 #include "imgui/imgui.h"
 #include "ImGuizmo.h"
+#include <filesystem>
 
 namespace Greenbox {
 
@@ -10,7 +11,8 @@ namespace Greenbox {
 		m_EditorCamera(),
 		m_Framebuffer(TextureDataType::DEPTH24_STENCIL8, { { TextureDataType::RGBA8, TextureDataType::RGBA }, { TextureDataType::R32I, TextureDataType::RED_INTEGER } }),
 		m_ActiveScene(std::make_shared<Scene>(1280, 720)),
-		m_EntityInspectorPanel(m_ActiveScene)
+		m_EntityInspectorPanel(m_ActiveScene),
+		m_FileBrowserPanel("assets")
 	{
 		GB_INFO("RendererLayer::RendererLayer");
 	}
@@ -56,6 +58,7 @@ namespace Greenbox {
 		m_Framebuffer.Bind();
 
 		m_EditorCamera.OnUpdate();
+		//m_EditorCamera.SetMode(0);
 
 		Renderer::ClearScene();
 		Renderer::SetCamera(m_EditorCamera);
@@ -145,6 +148,7 @@ namespace Greenbox {
 
 		// Panel
 		m_EntityInspectorPanel.OnImGuiRender();
+		m_FileBrowserPanel.OnImGuiRender();
 
 		// Viewport
 			// Update viewport related variables
@@ -153,6 +157,9 @@ namespace Greenbox {
 
 		m_ViewportFocused = ImGui::IsWindowFocused();
 		m_ViewportHovered = ImGui::IsWindowHovered();
+			// Block event
+		Application::GetInstance().GetImGuiLayer()->SetBlock(!(m_ViewportFocused && m_ViewportHovered));
+		m_EditorCamera.SetFreezed(!(m_ViewportFocused && m_ViewportHovered));
 
 		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportSize.x, viewportSize.y };
@@ -270,6 +277,12 @@ namespace Greenbox {
 				break;
 			case GLFW_KEY_C:
 				m_GuizmoType = ImGuizmo::OPERATION::SCALE;
+				break;
+			case GLFW_KEY_1:
+				m_EditorCamera.SetMode(0);
+				break;
+			case GLFW_KEY_2:
+				m_EditorCamera.SetMode(1);
 				break;
 		}
 

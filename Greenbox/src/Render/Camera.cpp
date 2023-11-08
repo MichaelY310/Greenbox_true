@@ -11,8 +11,8 @@ namespace Greenbox {
 
 	Camera::Camera(glm::vec3 position, glm::vec3 orientation, float fov, float aspectRatio, float nearClip, float farClip)
 		: m_Position(position), 
-		//m_Orientation(orientation), 
-		m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip)
+		m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip),
+		m_Mode(1)
 	{
 		UpdateProjection();
 		UpdateView();
@@ -27,6 +27,9 @@ namespace Greenbox {
 
 	void Camera::OnUpdate()
 	{
+		if (m_Freezed)
+			return;
+
 
 		if (Input::IsKeyPressed(GLFW_KEY_Q))
 		{
@@ -59,9 +62,16 @@ namespace Greenbox {
 		{
 			float deltaX = Input::GetMouseX() - m_PreviousMousePosition.x;
 			float deltaY = Input::GetMouseY() - m_PreviousMousePosition.y;
-			float yawSign = Up().y < 0 ? -1.0f : 1.0f;
-			m_Yaw += yawSign * deltaX * m_RotationSpeed * 0.1;
-			m_Pitch += deltaY * m_RotationSpeed * 0.1;
+			if (Input::IsKeyPressed(GLFW_KEY_LEFT_SHIFT))
+			{
+				m_Position -= Right() * deltaX * m_MovementSpeed * 0.01f;
+				m_Position += Up() * deltaY * m_MovementSpeed * 0.01f;
+			}
+			else {
+				float yawSign = Up().y < 0 ? -1.0f : 1.0f;
+				m_Yaw += yawSign * deltaX * m_RotationSpeed * 0.1;
+				m_Pitch += deltaY * m_RotationSpeed * 0.1;
+			}
 		}
 
 		m_PreviousMousePosition = glm::vec2(Input::GetMouseX(), Input::GetMouseY());
@@ -77,15 +87,29 @@ namespace Greenbox {
 	bool Camera::OnMouseScroll(MouseScrollEvent& e)
 	{
 		float delta = e.GetY() * m_ZoomSpeed;
-		m_Position += Forward() * delta * m_MovementSpeed;
+		//m_Position += Forward() * delta * m_MovementSpeed;
+		m_FOV += delta * m_MovementSpeed; 
 		return true;
 	}
 
 
 	void Camera::UpdateProjection()
 	{
+		// Perspective
 		m_AspectRatio = (float)m_ViewportWidth / (float)m_ViewportHeight;
-		m_Projection = glm::perspective(m_FOV, m_AspectRatio, m_NearClip, m_FarClip);
+		m_PerspectiveProjection = glm::perspective(m_FOV, m_AspectRatio, m_NearClip, m_FarClip);
+
+		// Orthographic
+		float halfHeight = glm::tan(m_FOV / 2.0f);
+		float halfWidth = halfHeight * m_AspectRatio;
+		float left = -halfWidth;
+		float right = halfWidth;
+		float bottom = -halfHeight;
+		float top = halfHeight;
+
+		// Create the orthographic projection matrix
+		m_OrthographicProjection = glm::ortho(left, right, bottom, top, m_NearClip, m_FarClip);
+		//m_OrthographicProjection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, 0.1f, 1000.0f);
 	}
 
 	void Camera::UpdateView()

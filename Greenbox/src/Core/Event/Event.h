@@ -17,9 +17,21 @@ namespace Greenbox {
 	public:
 		bool m_Handled = false;
 		virtual EventType GetEventType() const = 0;
-	private:
+	public:
 		//EventType m_EventType;
-	};
+		bool IsMouseEvent() {
+			return GetEventType() == EventType::MouseButtonPressed ||
+				GetEventType() == EventType::MouseButtonReleased ||
+				GetEventType() == EventType::MouseMoved ||
+				GetEventType() == EventType::MouseScrolled;
+		}
+
+		bool IsKeyEvent() {
+			return GetEventType() == EventType::KeyPressed ||
+				GetEventType() == EventType::KeyReleased ||
+				GetEventType() == EventType::KeyTyped;
+		}
+	}; 
 
 	class EventDispatcher
 	{

@@ -20,6 +20,9 @@ namespace Greenbox {
 		void End();
 		
 		void SetDarkThemeColors();
+		void SetBlock(bool block) { m_Block = block; }
+	private:
+		bool m_Block = true;
 	};
 
 }

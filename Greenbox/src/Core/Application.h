@@ -15,6 +15,7 @@ namespace Greenbox {
 		static Application& GetInstance() { return *s_Instance; }
 
 		Window& GetWindow() { return *m_Window; };
+		ImGuiLayer* GetImGuiLayer() { return m_ImGuiLayer; }
 		void Run();
 		void Stop();
 

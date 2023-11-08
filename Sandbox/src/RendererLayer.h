@@ -48,9 +48,11 @@ namespace Greenbox {
 		glm::vec2 m_ViewportMousePos = { 0.0f, 0.0f };	// Relative to MinBound
 
 		Entity m_HoveredEntity;
+
 	// panel
 	private:
 		EntityInspectorPanel m_EntityInspectorPanel;
+		FileBrowserPanel     m_FileBrowserPanel;
 
 	// ImGizmo
 	private:
