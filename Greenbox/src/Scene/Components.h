@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Render/Texture2D.h"
 #include <string>
 
 #include <glm/glm.hpp>
@@ -45,6 +46,7 @@ namespace Greenbox {
 	struct SpriteRendererComponent
 	{
 		glm::vec4 Color = { 1.0, 1.0, 1.0, 1.0 };
+		std::shared_ptr<Texture2D> Texture;
 
 		SpriteRendererComponent() = default;
 		SpriteRendererComponent(const SpriteRendererComponent&) = default;
@@ -54,6 +56,7 @@ namespace Greenbox {
 	struct QuadRendererComponent
 	{
 		glm::vec4 Color = { 1.0, 1.0, 1.0, 1.0 };
+		std::shared_ptr<Texture2D> Texture;
 
 		QuadRendererComponent() = default;
 		QuadRendererComponent(const QuadRendererComponent&) = default;
@@ -65,6 +68,7 @@ namespace Greenbox {
 	struct TriangleRendererComponent
 	{
 		glm::vec4 Color = { 1.0, 1.0, 1.0, 1.0 };
+		std::shared_ptr<Texture2D> Texture;
 
 		TriangleRendererComponent() = default;
 		TriangleRendererComponent(const TriangleRendererComponent&) = default;

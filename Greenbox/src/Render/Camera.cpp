@@ -88,7 +88,7 @@ namespace Greenbox {
 	{
 		float delta = e.GetY() * m_ZoomSpeed;
 		//m_Position += Forward() * delta * m_MovementSpeed;
-		m_FOV += delta * m_MovementSpeed; 
+		m_FOV -= delta * m_MovementSpeed; 
 		return true;
 	}
 

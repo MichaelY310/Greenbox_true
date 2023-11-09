@@ -260,14 +260,56 @@ namespace Greenbox {
 
         DrawComponent<SpriteRendererComponent>("Sprite Renderer", entity, [](auto& component) {
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+            ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_BROWSER_ITEM"))
+                {
+                    const wchar_t* path = (const wchar_t*)payload->Data;
+                    std::filesystem::path texturePath = std::filesystem::path(path);
+                    std::string texturePath_string = texturePath.string();
+                    const char* texturePath_char = texturePath_string.c_str();
+                    component.Texture = Texture2D::Create(texturePath_char);
+                }
+                ImGui::EndDragDropTarget();
+            }
         });
 
         DrawComponent<TriangleRendererComponent>("Triangle Renderer", entity, [](auto& component) {
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+            ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_BROWSER_ITEM"))
+                {
+                    const wchar_t* path = (const wchar_t*)payload->Data;
+                    std::filesystem::path texturePath = std::filesystem::path(path);
+                    std::string texturePath_string = texturePath.string();
+                    const char* texturePath_char = texturePath_string.c_str();
+                    component.Texture = Texture2D::Create(texturePath_char);
+                }
+                ImGui::EndDragDropTarget();
+            }
         });
 
         DrawComponent<QuadRendererComponent>("Quad Renderer", entity, [](auto& component) {
             ImGui::ColorEdit4("Color", glm::value_ptr(component.Color));
+
+            ImGui::Button("Texture", ImVec2(100.0f, 0.0f));
+            if (ImGui::BeginDragDropTarget())
+            {
+                if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("FILE_BROWSER_ITEM"))
+                {
+                    const wchar_t* path = (const wchar_t*)payload->Data;
+                    std::filesystem::path texturePath = std::filesystem::path(path);
+                    std::string texturePath_string = texturePath.string();
+                    const char* texturePath_char = texturePath_string.c_str();
+                    component.Texture = Texture2D::Create(texturePath_char);
+                }
+                ImGui::EndDragDropTarget();
+            }
         });
 
     }

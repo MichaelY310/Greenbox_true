@@ -14,7 +14,7 @@ namespace Greenbox {
 			for (auto entity : group)
 			{
 				auto [transform, sprite] = group.get<TransformComponent, SpriteRendererComponent>(entity);
-				Renderer::AddQuad(transform.GetTransform(), sprite.Color, nullptr, (int)entity);
+				Renderer::AddQuad(transform.GetTransform(), sprite.Color, sprite.Texture, (int)entity);
 			}
 		}
 
@@ -23,7 +23,7 @@ namespace Greenbox {
 			for (auto entity : view)
 			{
 				auto [transform, quad] = view.get<TransformComponent, QuadRendererComponent>(entity);
-				Renderer::AddQuad(transform.GetTransform(), quad.Color, nullptr, (int)entity);
+				Renderer::AddQuad(transform.GetTransform(), quad.Color, quad.Texture, (int)entity);
 			}
 		}
 
@@ -32,7 +32,7 @@ namespace Greenbox {
 			for (auto entity : view)
 			{
 				auto [transform, triangle] = view.get<TransformComponent, TriangleRendererComponent>(entity);
-				Renderer::AddTriangle(transform.GetTransform(), triangle.Color, nullptr, (int)entity);
+				Renderer::AddTriangle(transform.GetTransform(), triangle.Color, triangle.Texture, (int)entity);
 			}
 		}
 	}
