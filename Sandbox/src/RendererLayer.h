@@ -23,17 +23,22 @@ namespace Greenbox {
 	private:
 		std::string m_Name;
 		Framebuffer m_Framebuffer;
-		std::shared_ptr<Scene> m_ActiveScene;
 
+		EditorCamera m_EditorCamera;
+
+	// Scene
+	private:
+		std::shared_ptr<Scene> m_ActiveScene;
 		Entity squareEntity;
 		Entity triangleEntity;
 
-		Camera m_EditorCamera;
-		std::shared_ptr<Texture2D> texture;
-		std::shared_ptr<Texture2D> whiteTexture;
-		std::shared_ptr<Texture2D> texture1;
-		std::shared_ptr<Texture2D> texture2;
-		std::shared_ptr<Texture2D> texture3;
+		enum class SceneState
+		{
+			Edit = 0,
+			Play = 1
+		};
+
+		SceneState m_SceneState = SceneState::Edit;
 
 	// viewport
 	private:
@@ -59,6 +64,8 @@ namespace Greenbox {
 		int m_GuizmoType = -1;
 		bool m_Snap = false;
 		float m_SnapValue = 0.5f;
+
+
 	};
 
 }

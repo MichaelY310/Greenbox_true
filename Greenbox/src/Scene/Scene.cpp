@@ -35,6 +35,28 @@ namespace Greenbox {
 				Renderer::AddTriangle(transform.GetTransform(), triangle.Color, triangle.Texture, (int)entity);
 			}
 		}
+
+		Renderer::Draw();
+	}
+
+	void Scene::OnUpdateEdit(Camera& EditorCamera)
+	{
+		Renderer::SetCamera(EditorCamera);
+		OnUpdate();
+	}
+
+	void Scene::OnUpdatePlay()
+	{
+		{
+			auto view = m_Registry.view<TransformComponent, CameraComponent>();
+			for (auto entity : view)
+			{
+				auto [transform, camera] = view.get<TransformComponent, CameraComponent>(entity);
+
+			}
+		}
+
+		OnUpdate();
 	}
 
 	Entity Scene::CreateEntity(const std::string& name)

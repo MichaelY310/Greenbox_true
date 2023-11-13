@@ -4,24 +4,18 @@
 
 #include <vector>
 #include "Core/Log.h"
-#include "Core/Event/MouseEvent.h"
-#include "Core/Event/KeyEvent.h"
 
 namespace Greenbox {
 
 	class Camera
 	{
+		friend class EditorCamera;
 	public:
 		Camera(glm::vec3 position, glm::vec3 orientation, float fov, float aspectRatio, float nearClip, float farClip);
 		Camera();
 		~Camera() = default;
 
 		void OnUpdate();
-		void OnEvent(Event& e);
-
-		bool OnMouseScroll(MouseScrollEvent& e);
-		bool OnMouseButtonPressed(MouseButtonPressedEvent& e);
-		bool OnKeyPressed(KeyPressedEvent& e);
 
 		void UpdateProjection();
 		void UpdateView();
@@ -68,8 +62,6 @@ namespace Greenbox {
 		float m_MovementSpeed = 0.1f;
 		float m_ZoomSpeed = 0.3f;
 		float m_RotationSpeed = glm::radians(45.0f) * 0.1;
-
-		glm::vec2 m_PreviousMousePosition;
 
 		bool m_Freezed;
 	};

@@ -23,11 +23,6 @@ namespace Greenbox {
 
 		Renderer::SetupRenderState();
 
-		whiteTexture = Texture2D::Create(0xffffffff, 1, 1);
-		texture1 = Texture2D::Create("assets/imgs/xiaobei.jpg");
-		texture2 = Texture2D::Create("assets/imgs/quannai.jpg");
-		texture3 = Texture2D::Create("assets/imgs/yan.jpg");
-
 		squareEntity = m_ActiveScene->CreateEntity("square");
 		//squareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
@@ -56,21 +51,19 @@ namespace Greenbox {
 		}
 
 		m_Framebuffer.Bind();
-
-		m_EditorCamera.OnUpdate();
-		//m_EditorCamera.SetMode(0);
-
 		Renderer::ClearScene();
-		Renderer::SetCamera(m_EditorCamera);
-
 		m_Framebuffer.ClearColorAttachment(1, -1);
 
-		m_ActiveScene->OnUpdate();
-		Renderer::AddTriangle(glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 1.0f, 0.0f)), glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), texture1);
-		Renderer::AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(1.0f, 0.0f, 0.0f)), glm::vec4(0.5f, 1.0f, 1.0f, 1.0f), texture2);
-		Renderer::AddQuad(glm::translate(glm::mat4(1.0f), glm::vec3(2.0f, 0.0f, 0.0f)), glm::vec4(1.0f, 1.0f, 1.0f, 1.0f), texture3);
+		if (m_SceneState == SceneState::Edit)
+		{
+			m_EditorCamera.OnUpdate();
+			m_ActiveScene->OnUpdateEdit(m_EditorCamera);
+		} 
+		else if (m_SceneState == SceneState::Play)
+		{
+			m_ActiveScene->OnUpdatePlay();
+		}
 
-		Renderer::Draw();
 
 		// Select Entity
 		if (m_ViewportMousePos.x >= 0 && m_ViewportMousePos.y >= 0 && m_ViewportMousePos.x < m_ViewportSize.x && m_ViewportMousePos.y < m_ViewportSize.y)

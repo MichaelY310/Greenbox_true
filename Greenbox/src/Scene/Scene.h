@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entt.hpp"
+#include "Render/Camera.h"
 
 namespace Greenbox {
 
@@ -14,7 +15,9 @@ namespace Greenbox {
 			:m_ViewportWidth(width), m_ViewportHeight(height), m_Registry() {}
 		~Scene() = default;
 
-		void OnUpdate();
+		void OnUpdate(); // The shared part of Edit and Play
+		void OnUpdateEdit(Camera& EditorCamera);
+		void OnUpdatePlay();
 
 		Entity CreateEntity(const std::string& name = "Untitled");
 		void DestroyEntity(Entity entity);

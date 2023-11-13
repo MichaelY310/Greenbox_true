@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Render/Texture2D.h"
-#include <string>
+#include "Render/Camera.h"
 
+#include <string>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #define GLM_ENABLE_EXPERIMENTAL
@@ -74,6 +75,13 @@ namespace Greenbox {
 		TriangleRendererComponent(const TriangleRendererComponent&) = default;
 		TriangleRendererComponent(const glm::vec4& color) : Color(color) {}
 
+	};
 
+	struct CameraComponent
+	{
+		Camera camera; 
+
+		CameraComponent() = default;
+		CameraComponent(const CameraComponent&) = default;
 	};
 }
