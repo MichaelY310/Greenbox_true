@@ -10,7 +10,7 @@ namespace Greenbox {
 		stbi_set_flip_vertically_on_load(true);
 		int width, height, n_Channels;
 		stbi_uc* data = stbi_load(filePath, &width, &height, &n_Channels, 0);
-		//GB_INFO(filePath);
+		GB_INFO(filePath);
 		GB_ASSERT(data, "Failed to load Texture2D {0}", filePath);
 		m_Width = width;
 		m_Height = height;

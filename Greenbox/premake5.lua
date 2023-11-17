@@ -35,6 +35,7 @@ project "Greenbox"
         "src",
         "include",
         "src/PCH",
+        "%{IncludeDir.Box2D}",
         "Dependencies/spdlog/include",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
@@ -49,6 +50,7 @@ project "Greenbox"
 
     links 
     { 
+        "Box2D", 
         "GLFW", 
         "Glad", 
         "ImGui",

@@ -29,16 +29,8 @@ namespace Greenbox {
 	// Scene
 	private:
 		std::shared_ptr<Scene> m_ActiveScene;
-		Entity squareEntity;
+		Entity cameraEntity;
 		Entity triangleEntity;
-
-		enum class SceneState
-		{
-			Edit = 0,
-			Play = 1
-		};
-
-		SceneState m_SceneState = SceneState::Edit;
 
 	// viewport
 	private:
@@ -58,10 +50,12 @@ namespace Greenbox {
 	private:
 		EntityInspectorPanel m_EntityInspectorPanel;
 		FileBrowserPanel     m_FileBrowserPanel;
+		ControllerUIPanel	 m_ControllerUIPanel;
 
 	// ImGizmo
 	private:
 		int m_GuizmoType = -1;
+		int m_TempGuizmoType = -1;
 		bool m_Snap = false;
 		float m_SnapValue = 0.5f;
 

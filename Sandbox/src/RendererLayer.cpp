@@ -12,7 +12,8 @@ namespace Greenbox {
 		m_Framebuffer(TextureDataType::DEPTH24_STENCIL8, { { TextureDataType::RGBA8, TextureDataType::RGBA }, { TextureDataType::R32I, TextureDataType::RED_INTEGER } }),
 		m_ActiveScene(std::make_shared<Scene>(1280, 720)),
 		m_EntityInspectorPanel(m_ActiveScene),
-		m_FileBrowserPanel("assets")
+		m_FileBrowserPanel("assets"),
+		m_ControllerUIPanel(&m_EditorCamera, m_ActiveScene)
 	{
 		GB_INFO("RendererLayer::RendererLayer");
 	}
@@ -23,8 +24,8 @@ namespace Greenbox {
 
 		Renderer::SetupRenderState();
 
-		squareEntity = m_ActiveScene->CreateEntity("square");
-		//squareEntity.AddComponent<SpriteRendererComponent>(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+		cameraEntity = m_ActiveScene->CreateEntity("camera");
+		cameraEntity.AddComponent<CameraComponent>();
 
 		triangleEntity = m_ActiveScene->CreateEntity("triangle");
 		triangleEntity.AddComponent<TriangleRendererComponent>(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
@@ -54,19 +55,15 @@ namespace Greenbox {
 		Renderer::ClearScene();
 		m_Framebuffer.ClearColorAttachment(1, -1);
 
-		if (m_SceneState == SceneState::Edit)
+		if (m_ViewportFocused)
 		{
 			m_EditorCamera.OnUpdate();
-			m_ActiveScene->OnUpdateEdit(m_EditorCamera);
-		} 
-		else if (m_SceneState == SceneState::Play)
-		{
-			m_ActiveScene->OnUpdatePlay();
 		}
+		m_ActiveScene->OnUpdate(m_EditorCamera);
 
 
 		// Select Entity
-		if (m_ViewportMousePos.x >= 0 && m_ViewportMousePos.y >= 0 && m_ViewportMousePos.x < m_ViewportSize.x && m_ViewportMousePos.y < m_ViewportSize.y)
+		if (m_ActiveScene->getSceneState() == Scene::SceneState::Edit && m_ViewportMousePos.x >= 0 && m_ViewportMousePos.y >= 0 && m_ViewportMousePos.x < m_ViewportSize.x && m_ViewportMousePos.y < m_ViewportSize.y)
 		{
 			int pixelData = m_Framebuffer.ReadPixel(1, m_ViewportMousePos.x, m_ViewportMousePos.y);
 			m_HoveredEntity = pixelData == -1 ? Entity() : Entity((entt::entity)pixelData, m_ActiveScene.get());
@@ -142,6 +139,7 @@ namespace Greenbox {
 		// Panel
 		m_EntityInspectorPanel.OnImGuiRender();
 		m_FileBrowserPanel.OnImGuiRender();
+		m_ControllerUIPanel.OnImGuiRender();
 
 		// Viewport
 			// Update viewport related variables
@@ -152,7 +150,7 @@ namespace Greenbox {
 		m_ViewportHovered = ImGui::IsWindowHovered();
 			// Block event
 		Application::GetInstance().GetImGuiLayer()->SetBlock(!(m_ViewportFocused && m_ViewportHovered));
-		m_EditorCamera.SetFreezed(!(m_ViewportFocused && m_ViewportHovered));
+		//m_EditorCamera.SetFreezed(!(m_ViewportFocused && m_ViewportHovered));
 
 		ImVec2 viewportSize = ImGui::GetContentRegionAvail();
 		m_ViewportSize = { viewportSize.x, viewportSize.y };
@@ -180,7 +178,7 @@ namespace Greenbox {
 			// Select Entity
 			// ImGizmo
 		Entity selectedEntity = m_EntityInspectorPanel.GetSelectedEntity();
-		if (selectedEntity && m_GuizmoType != -1)
+		if (selectedEntity && m_GuizmoType != -1 && m_ActiveScene->getSceneState() == Scene::SceneState::Edit)
 		{
 				// Set snap values
 			m_Snap = Input::IsKeyPressed(GLFW_KEY_LEFT_CONTROL);
@@ -276,6 +274,12 @@ namespace Greenbox {
 				break;
 			case GLFW_KEY_2:
 				m_EditorCamera.SetMode(1);
+				break;
+			case GLFW_KEY_9:
+				m_ActiveScene->SetSceneState(Scene::SceneState::Edit);
+				break;
+			case GLFW_KEY_0:
+				m_ActiveScene->SetSceneState(Scene::SceneState::Play);
 				break;
 		}
 

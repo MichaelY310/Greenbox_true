@@ -28,6 +28,8 @@ project "Sandbox"
         "%{IncludeDir.yaml_cpp}",
         "%{IncludeDir.ImGuizmo}",
         "%{IncludeDir.spdlog}",
+        "%{IncludeDir.Box2D}",
+
 	}
 
 	links 

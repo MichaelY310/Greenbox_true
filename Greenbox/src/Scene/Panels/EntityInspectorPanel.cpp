@@ -229,20 +229,46 @@ namespace Greenbox {
         
         if (ImGui::BeginPopup("Add Component"))
         {
-            if (ImGui::MenuItem("Sprite Renderer"))
+
+            if (!m_SelectedEntity.HasComponent<SpriteRendererComponent>())
             {
-                entity.AddComponent<SpriteRendererComponent>();
-                ImGui::CloseCurrentPopup();
+                if (ImGui::MenuItem("Sprite Renderer"))
+                {
+                    entity.AddComponent<SpriteRendererComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
             }
-            else if (ImGui::MenuItem("Triangle Renderer"))
+            if (!m_SelectedEntity.HasComponent<TriangleRendererComponent>())
             {
-                entity.AddComponent<TriangleRendererComponent>();
-                ImGui::CloseCurrentPopup();
+                if (ImGui::MenuItem("Triangle Renderer"))
+                {
+                    entity.AddComponent<TriangleRendererComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
             }
-            else if (ImGui::MenuItem("Quad Renderer"))
+            if (!m_SelectedEntity.HasComponent<QuadRendererComponent>())
             {
-                entity.AddComponent<QuadRendererComponent>();
-                ImGui::CloseCurrentPopup();
+                if (ImGui::MenuItem("Quad Renderer"))
+                {
+                    entity.AddComponent<QuadRendererComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+            if (!m_SelectedEntity.HasComponent<Box2DRigidbodyComponent>())
+            {
+                if (ImGui::MenuItem("Rigid Body"))
+                {
+                    entity.AddComponent<Box2DRigidbodyComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
+            }
+            if (!m_SelectedEntity.HasComponent<Box2DBoxColliderComponent>())
+            {
+                if (ImGui::MenuItem("Box Collider"))
+                {
+                    entity.AddComponent<Box2DBoxColliderComponent>();
+                    ImGui::CloseCurrentPopup();
+                }
             }
             ImGui::EndPopup();
         }
@@ -312,6 +338,66 @@ namespace Greenbox {
             }
         });
 
+        DrawComponent<CameraComponent>("Camera", entity, [](auto& component) {
+            auto& camera = component.camera;
+            bool isPerspective = camera.GetMode() == 1;
+            ImGui::Checkbox("Perspective", &isPerspective);
+            if (isPerspective)
+            {
+                camera.SetMode(1);
+            }
+            else 
+            {
+                camera.SetMode(0);
+            }
+
+            float FOV = camera.GetFOV();
+            if (ImGui::DragFloat("FOV", &FOV))
+                camera.SetFOV(FOV);
+
+            float Near = camera.GetNearClip();
+            if (ImGui::DragFloat("Near", &Near))
+                camera.SetNearClip(Near);
+
+            float Far = camera.GetFarClip();
+            if (ImGui::DragFloat("Far", &Far))
+                camera.SetFarClip(Far);
+        });
+
+        DrawComponent<Box2DRigidbodyComponent>("Rigid Body", entity, [](auto& component) {
+            const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
+            const char* currentBodyTypeString = bodyTypeStrings[(int)component.BodyType];
+            if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
+            {
+                for (int i = 0; i < 3; i++)
+                {
+                    bool isSelected = currentBodyTypeString == bodyTypeStrings[i];
+                    if (ImGui::Selectable(bodyTypeStrings[i], isSelected))
+                    {
+                        currentBodyTypeString = bodyTypeStrings[i];
+                        if (i == 0) { component.BodyType = b2_staticBody;  }
+                        if (i == 1) { component.BodyType = b2_dynamicBody; }
+                        if (i == 2) { component.BodyType = b2_kinematicBody; }
+                    }
+
+                    if (isSelected)
+                        ImGui::SetItemDefaultFocus();
+                }
+
+                ImGui::EndCombo();
+            }
+
+            ImGui::Checkbox("Fixed Rotation", &component.FixedRotation);
+        });
+
+        DrawComponent<Box2DBoxColliderComponent>("Box Collider", entity, [](auto& component) {
+            ImGui::DragFloat2("Offset", glm::value_ptr(component.Offset));
+            ImGui::DragFloat2("Size", glm::value_ptr(component.Offset));
+            ImGui::DragFloat("Density", &component.Density, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat("Friction", &component.Friction, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat("Restitution", &component.Restitution, 0.01f, 0.0f, 1.0f);
+            ImGui::DragFloat("Restitution Threshold", &component.RestitutionThreshold, 0.01f, 0.0f);
+        });
     }
 
 }

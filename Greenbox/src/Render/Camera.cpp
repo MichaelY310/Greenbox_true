@@ -9,8 +9,7 @@ namespace Greenbox {
 
 	Camera::Camera(glm::vec3 position, glm::vec3 orientation, float fov, float aspectRatio, float nearClip, float farClip)
 		: m_Position(position), 
-		m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip),
-		m_Mode(1)
+		m_FOV(fov), m_AspectRatio(aspectRatio), m_NearClip(nearClip), m_FarClip(farClip)
 	{
 		UpdateProjection();
 		UpdateView();

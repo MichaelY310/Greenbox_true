@@ -9,6 +9,11 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/quaternion.hpp>
 
+#include "box2d/b2_world.h"
+#include "box2d/b2_body.h"
+#include "box2d/b2_fixture.h"
+#include "box2d/b2_polygon_shape.h"
+
 namespace Greenbox {
 
 
@@ -79,9 +84,36 @@ namespace Greenbox {
 
 	struct CameraComponent
 	{
-		Camera camera; 
+		Camera camera;
+		bool Primary = true;
 
 		CameraComponent() = default;
 		CameraComponent(const CameraComponent&) = default;
+	};
+
+	struct Box2DRigidbodyComponent
+	{
+		b2BodyType BodyType = b2_staticBody; // b2_staticBody, b2_dynamicBody, b2_kinematicBody
+		bool FixedRotation = false;
+		b2Body* RuntimeBody = nullptr;
+
+		Box2DRigidbodyComponent() = default;
+		Box2DRigidbodyComponent(const Box2DRigidbodyComponent&) = default;
+	};
+
+	struct Box2DBoxColliderComponent
+	{
+		glm::vec2 Offset = { 0.0f, 0.0f };
+		glm::vec2 Size = { 0.5f, 0.5f };
+
+		float Density = 1.0f;
+		float Friction = 0.5f;
+		float Restitution = 0.0f;
+		float RestitutionThreshold = 0.5f;
+
+		b2Fixture* RuntimeFixture = nullptr;
+
+		Box2DBoxColliderComponent() = default;
+		Box2DBoxColliderComponent(const Box2DBoxColliderComponent&) = default;
 	};
 }
