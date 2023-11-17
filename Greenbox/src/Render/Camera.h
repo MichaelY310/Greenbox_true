@@ -66,10 +66,6 @@ namespace Greenbox {
 		uint32_t m_ViewportWidth = 1280;
 		uint32_t m_ViewportHeight = 720;
 
-		float m_MovementSpeed = 0.1f;
-		float m_ZoomSpeed = 0.3f;
-		float m_RotationSpeed = glm::radians(45.0f) * 0.1;
-
 		bool m_Freezed = false;
 	};
 

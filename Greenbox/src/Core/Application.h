@@ -36,6 +36,7 @@ namespace Greenbox {
 
 		std::string m_AppName;
 		bool m_Running = true;
+		float m_LastFrameTime = 0.0f;
 	private:
 		static Application* s_Instance;		// this is defined in Application::Application
 		LayerStack m_LayerStack;

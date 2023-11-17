@@ -33,6 +33,10 @@ namespace Greenbox {
 		glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
 		glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
 
+		glm::vec3 TempTranslation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 TempRotation = { 0.0f, 0.0f, 0.0f };
+		glm::vec3 TempScale = { 1.0f, 1.0f, 1.0f };
+
 		TransformComponent() = default;
 		TransformComponent(const TransformComponent&) = default;
 		TransformComponent(const glm::vec3& translate, 

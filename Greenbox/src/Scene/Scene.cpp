@@ -9,21 +9,25 @@
 
 namespace Greenbox {
 
-	void Scene::OnUpdate(Camera& EditorCamera)
+	void Scene::OnUpdate(float timestep, Camera& EditorCamera)
 	{
 		if (m_SceneState == SceneState::Edit)
 		{
-			OnPlayEnd();
-			OnUpdateEdit(EditorCamera);
+			if (m_PrevSceneState == SceneState::Play)
+				OnPlayEnd();
+			OnUpdateEdit(timestep, EditorCamera);
 		}
 		else if (m_SceneState == SceneState::Play)
 		{
-			OnPlayStart();
-			OnUpdatePlay();
+			if (m_PrevSceneState == SceneState::Edit)
+				OnPlayStart();
+			OnUpdatePlay(timestep);
 		}
+		m_PrevSceneState = m_SceneState;
+
 	}
 
-	void Scene::OnUpdateCore()
+	void Scene::OnUpdateCore(float timestep)
 	{
 		{
 			auto group = m_Registry.group<TransformComponent>(entt::get<SpriteRendererComponent>);
@@ -55,13 +59,13 @@ namespace Greenbox {
 		Renderer::Draw();
 	}
 
-	void Scene::OnUpdateEdit(Camera& EditorCamera)
+	void Scene::OnUpdateEdit(float timestep, Camera& EditorCamera)
 	{
 		Renderer::SetCamera(EditorCamera);
-		OnUpdateCore();
+		OnUpdateCore(timestep);
 	}
 
-	void Scene::OnUpdatePlay()
+	void Scene::OnUpdatePlay(float timestep)
 	{
 		// Scene Camera
 		Camera* primaryCamera = nullptr;
@@ -84,8 +88,7 @@ namespace Greenbox {
 		// Box2D Physics
 		const int32_t velocityIterations = 6;
 		const int32_t positionIterations = 2;
-		float ts = 0.1f;
-		m_Box2DPhysicsWorld->Step(ts, velocityIterations, positionIterations);
+		m_Box2DPhysicsWorld->Step(timestep, velocityIterations, positionIterations);
 
 		auto view = m_Registry.view<Box2DRigidbodyComponent>();
 		for (auto e : view)
@@ -101,12 +104,26 @@ namespace Greenbox {
 		}
 
 		Renderer::SetCamera(*primaryCamera);
-		OnUpdateCore();
+		OnUpdateCore(timestep);
 	}
 
 	void Scene::OnPlayStart()
 	{
 		m_Box2DPhysicsWorld = new b2World({ 0.0f, -9.8f });
+
+		// Store original transforms
+		{
+			auto view = m_Registry.view<TransformComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				TransformComponent& transformComponent = entity.GetComponent<TransformComponent>();
+				transformComponent.TempTranslation = transformComponent.Translation;
+				transformComponent.TempRotation = transformComponent.Rotation;
+				transformComponent.TempScale = transformComponent.Scale;
+			}
+		}
+
 
 		//auto view = m_Registry.view<TransformComponent, Box2DRigidbodyComponent>();
 		auto view = m_Registry.view<Box2DRigidbodyComponent>();
@@ -150,6 +167,18 @@ namespace Greenbox {
 
 	void Scene::OnPlayEnd()
 	{
+		// Restore original transforms
+		{
+			auto view = m_Registry.view<TransformComponent>();
+			for (auto e : view)
+			{
+				Entity entity = { e, this };
+				TransformComponent& transformComponent = entity.GetComponent<TransformComponent>();
+				transformComponent.Translation = transformComponent.TempTranslation;
+				transformComponent.TempRotation = transformComponent.TempRotation;
+				transformComponent.Scale = transformComponent.TempScale;
+			}
+		}
 		delete m_Box2DPhysicsWorld;
 		m_Box2DPhysicsWorld = nullptr;
 	}

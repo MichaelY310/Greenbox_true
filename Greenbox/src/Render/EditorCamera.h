@@ -13,7 +13,7 @@ namespace Greenbox {
 		EditorCamera();
 		~EditorCamera() = default;
 
-		void OnUpdate();
+		void OnUpdate(float timestep);
 		void OnEvent(Event& e);
 
 		bool OnMouseScroll(MouseScrollEvent& e);
@@ -22,6 +22,10 @@ namespace Greenbox {
 
 	private:
 		glm::vec2 m_PreviousMousePosition;
+
+		float m_MovementSpeed = 1.0f;
+		float m_ZoomSpeed = 3.0f;
+		float m_RotationSpeed = glm::radians(45.0f) * 1.0f;
 	};
 
 }

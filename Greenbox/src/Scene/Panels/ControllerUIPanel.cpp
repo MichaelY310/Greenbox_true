@@ -27,13 +27,15 @@ namespace Greenbox {
 		const auto& buttonActive = colors[ImGuiCol_ButtonActive];
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(buttonActive.x, buttonActive.y, buttonActive.z, 0.5f));
 
+		float AvailHeight = ImGui::GetWindowContentRegionMax().y - 25.0f;
+		float AvailWidth = ImGui::GetWindowContentRegionMax().x;
+
 		// PlayButton
-		float height = ImGui::GetWindowContentRegionMax().y - 25.0f;
-		float size = height - 4.0f;
+		float size = AvailHeight - 4.0f;
 		std::shared_ptr<Texture2D> icon = m_ApplicationActiveScene->getSceneState() == Scene::SceneState::Edit ? m_PlayButtonImage : m_StopButtonImage;
 		// Upper Left
-		ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-		ImGui::SetCursorPosY(25.0f + (height * 0.5f) - (size * 0.5f));
+		ImGui::SetCursorPosX((AvailWidth * 0.5f) - (size * 0.5f));
+		ImGui::SetCursorPosY(25.0f + (AvailHeight * 0.5f) - (size * 0.5f));
 		if (ImGui::ImageButton((ImTextureID)icon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
 		{
 			if (m_ApplicationActiveScene->getSceneState() == Scene::SceneState::Edit)
@@ -43,11 +45,10 @@ namespace Greenbox {
 		}
 
 		// Editor Camera Mode
-		height = ImGui::GetWindowContentRegionMax().y - 25.0f;
-		size = height - 3.5f;
-		std::shared_ptr<Texture2D> CameraModeIcon = m_ApplicationActiveScene->getSceneState() == Scene::SceneState::Edit ? m_CameraPerspectiveImage : m_CameraOrthographicImage;
-		ImGui::SetCursorPosX(ImGui::GetWindowContentRegionMax().x - (size * 0.5f) - 10.0f);
-		ImGui::SetCursorPosY(25.0f + (height * 0.5f) - (size * 0.5f));
+		size = AvailHeight - 4.0f - 1.0f;
+		std::shared_ptr<Texture2D> CameraModeIcon = m_ApplicationEditorCamera->GetMode() == 1 ? m_CameraPerspectiveImage : m_CameraOrthographicImage;
+		ImGui::SetCursorPosX(AvailWidth - (size * 0.5f) - 10.0f);
+		ImGui::SetCursorPosY(25.0f + (AvailHeight * 0.5f) - (size * 0.5f));
 		if (ImGui::ImageButton((ImTextureID)CameraModeIcon->GetRendererID(), ImVec2(size, size), ImVec2(0, 0), ImVec2(1, 1), 0))
 		{
 			if (m_ApplicationEditorCamera->GetMode() == 1)
@@ -55,6 +56,9 @@ namespace Greenbox {
 			else if (m_ApplicationEditorCamera->GetMode() == 0)
 				m_ApplicationEditorCamera->SetMode(1);
 		}
+
+		// 
+
 		ImGui::PopStyleVar(2);
 		ImGui::PopStyleColor(3);
 		ImGui::End();

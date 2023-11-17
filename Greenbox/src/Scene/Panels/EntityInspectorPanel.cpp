@@ -366,7 +366,11 @@ namespace Greenbox {
 
         DrawComponent<Box2DRigidbodyComponent>("Rigid Body", entity, [](auto& component) {
             const char* bodyTypeStrings[] = { "Static", "Dynamic", "Kinematic" };
-            const char* currentBodyTypeString = bodyTypeStrings[(int)component.BodyType];
+            const char* currentBodyTypeString = bodyTypeStrings[0];
+            if (component.BodyType == b2_staticBody) { currentBodyTypeString = bodyTypeStrings[0]; }
+            else if (component.BodyType == b2_dynamicBody) { currentBodyTypeString = bodyTypeStrings[1]; }
+            else if (component.BodyType == b2_kinematicBody) { currentBodyTypeString = bodyTypeStrings[2]; }
+
             if (ImGui::BeginCombo("Body Type", currentBodyTypeString))
             {
                 for (int i = 0; i < 3; i++)

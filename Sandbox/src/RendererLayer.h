@@ -12,7 +12,7 @@ namespace Greenbox {
 		~RendererLayer() = default;
 		virtual void OnAttach() override;
 		virtual void OnDetach() override;
-		virtual void OnUpdate() override;
+		virtual void OnUpdate(float timestep) override;
 		virtual void OnImGuiRender() override;
 		virtual void OnEvent(Event& e) override;
 
@@ -30,7 +30,7 @@ namespace Greenbox {
 	private:
 		std::shared_ptr<Scene> m_ActiveScene;
 		Entity cameraEntity;
-		Entity triangleEntity;
+		Entity squareEntity;
 
 	// viewport
 	private:

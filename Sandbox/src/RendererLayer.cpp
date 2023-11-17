@@ -27,8 +27,8 @@ namespace Greenbox {
 		cameraEntity = m_ActiveScene->CreateEntity("camera");
 		cameraEntity.AddComponent<CameraComponent>();
 
-		triangleEntity = m_ActiveScene->CreateEntity("triangle");
-		triangleEntity.AddComponent<TriangleRendererComponent>(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
+		squareEntity = m_ActiveScene->CreateEntity("square");
+		squareEntity.AddComponent<QuadRendererComponent>(glm::vec4(0.5f, 0.5f, 0.5f, 1.0f));
 	}
 
 	void RendererLayer::OnDetach()
@@ -37,7 +37,7 @@ namespace Greenbox {
 
 	}
 
-	void RendererLayer::OnUpdate()
+	void RendererLayer::OnUpdate(float timestep)
 	{
 		// Set Viewport size
 		// Viewport is initially 0.0f. So before getting the size from ImGui, just use the default values.
@@ -57,9 +57,9 @@ namespace Greenbox {
 
 		if (m_ViewportFocused)
 		{
-			m_EditorCamera.OnUpdate();
+			m_EditorCamera.OnUpdate(timestep);
 		}
-		m_ActiveScene->OnUpdate(m_EditorCamera);
+		m_ActiveScene->OnUpdate(timestep, m_EditorCamera);
 
 
 		// Select Entity

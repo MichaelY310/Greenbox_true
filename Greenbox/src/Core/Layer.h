@@ -13,7 +13,7 @@ namespace Greenbox {
 		virtual ~Layer() = default;
 		virtual void OnAttach() {}; 
 		virtual void OnDetach() {};
-		virtual void OnUpdate() {};
+		virtual void OnUpdate(float timestep) {};
 		virtual void OnImGuiRender() {};
 		virtual void OnEvent(Event& e) {};
 		const std::string GetName() { return m_Name; }

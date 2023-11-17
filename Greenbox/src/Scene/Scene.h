@@ -23,10 +23,10 @@ namespace Greenbox {
 			:m_ViewportWidth(width), m_ViewportHeight(height), m_Registry() {}
 		~Scene() = default;
 
-		void OnUpdate(Camera& EditorCamera);
-		void OnUpdateCore(); // The shared part of Edit and Play
-		void OnUpdateEdit(Camera& EditorCamera);
-		void OnUpdatePlay();
+		void OnUpdate(float timestep, Camera& EditorCamera);
+		void OnUpdateCore(float timestep); // The shared part of Edit and Play
+		void OnUpdateEdit(float timestep, Camera& EditorCamera);
+		void OnUpdatePlay(float timestep);
 		void OnPlayStart();
 		void OnPlayEnd();
 		void SetSceneState(SceneState sceneState) { m_SceneState = sceneState; };
@@ -50,6 +50,7 @@ namespace Greenbox {
 		uint32_t m_ViewportHeight = 720;
 
 		SceneState m_SceneState = SceneState::Edit;
+		SceneState m_PrevSceneState = SceneState::Edit;
 
 		b2World* m_Box2DPhysicsWorld = nullptr;
 
